@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="470" viewBox="0 0 1200 470" role="img" aria-label="End-to-end pipeline: caller, speech to text, router, price engine or business Q and A, safety guards, reply, text to speech, back to caller">
+  <defs>
+    <style>
+      .t  { font: 700 15px 'Segoe UI', Inter, Helvetica, Arial, sans-serif; fill: #f5f5f5; }
+      .s  { font: 400 12.5px 'Segoe UI', Inter, Helvetica, Arial, sans-serif; fill: #c8d1cb; }
+      .m  { font: 600 12px 'Segoe UI', Inter, Helvetica, Arial, sans-serif; fill: #a5d6a7; }
+      .h  { font: 800 18px 'Segoe UI', Inter, Helvetica, Arial, sans-serif; fill: #f3d9b1; }
+      .lg { font: 500 12.5px 'Segoe UI', Inter, Helvetica, Arial, sans-serif; fill: #d7ccc8; }
+      .wire { fill: none; stroke: #4e5b52; stroke-width: 2.5; }
+      .flow { fill: none; stroke: #8fd19e; stroke-width: 2.5; stroke-dasharray: 6 10; animation: run 1.2s linear infinite; }
+      .back { fill: none; stroke: #f3d9b1; stroke-width: 2.5; stroke-dasharray: 6 10; animation: run 1.2s linear infinite reverse; }
+      @keyframes run { to { stroke-dashoffset: -32; } }
+      .local  { fill: #1c2a21; stroke: #66bb6a; stroke-width: 2; }
+      .online { fill: #15212d; stroke: #64b5f6; stroke-width: 2; stroke-dasharray: 7 5; }
+      .guard  { fill: #2d1a1a; stroke: #ef5350; stroke-width: 2; }
+      .route  { fill: #2b2414; stroke: #ffca28; stroke-width: 2; }
+      .glow { animation: glow 2.4s ease-in-out infinite; }
+      @keyframes glow { 0%,100% { stroke-opacity: 0.55; } 50% { stroke-opacity: 1; } }
+    </style>
+  </defs>
+
+  <rect width="1200" height="470" rx="22" fill="#14110f"/>
+  <text x="30" y="40" class="h">End-to-end pipeline</text>
+  <text x="30" y="62" class="lg">Every box runs on the hub laptop except the dashed blue ones, which are optional and have a local fallback.</text>
+
+  <!-- wires -->
+  <path id="upper" class="wire" d="M100,205 L270,205 L440,205 L615,125 L815,205 L985,205 L1120,205"/>
+  <path id="lower" class="wire" d="M100,205 L270,205 L440,205 L615,285 L815,205 L985,205 L1120,205"/>
+  <path class="flow" d="M100,205 L270,205 L440,205 L615,125 L815,205 L985,205 L1120,205"/>
+  <path class="flow" d="M440,205 L615,285 L815,205"/>
+  <path class="back" d="M1120,240 C1120,420 100,420 100,240"/>
+  <text x="610" y="402" text-anchor="middle" class="m" fill="#f3d9b1">spoken answer in the caller's language</text>
+
+  <!-- 1 caller -->
+  <rect x="25" y="160" width="150" height="90" rx="14" class="online"/>
+  <text x="100" y="188" text-anchor="middle" class="t">Caller</text>
+  <text x="100" y="208" text-anchor="middle" class="s">Phone via Twilio</text>
+  <text x="100" y="226" text-anchor="middle" class="s">or web mic / text</text>
+
+  <!-- 2 STT -->
+  <rect x="195" y="160" width="150" height="90" rx="14" class="local glow"/>
+  <text x="270" y="188" text-anchor="middle" class="t">Speech to text</text>
+  <text x="270" y="208" text-anchor="middle" class="s">faster-whisper small</text>
+  <text x="270" y="228" text-anchor="middle" class="m">+ language ID · 4-6 s</text>
+
+  <!-- 3 router -->
+  <rect x="365" y="160" width="150" height="90" rx="14" class="route"/>
+  <text x="440" y="188" text-anchor="middle" class="t">Router</text>
+  <text x="440" y="208" text-anchor="middle" class="s">human? price check?</text>
+  <text x="440" y="228" text-anchor="middle" class="m">rules · ~0 s</text>
+
+  <!-- 4a price engine -->
+  <rect x="525" y="82" width="180" height="88" rx="14" class="local glow"/>
+  <text x="615" y="108" text-anchor="middle" class="t">Price engine</text>
+  <text x="615" y="128" text-anchor="middle" class="s">rules → Qwen2.5 3B if gaps</text>
+  <text x="615" y="148" text-anchor="middle" class="m">SQLite dated records</text>
+
+  <!-- 4b business QA -->
+  <rect x="525" y="242" width="180" height="88" rx="14" class="local glow"/>
+  <text x="615" y="268" text-anchor="middle" class="t">Business Q&amp;A</text>
+  <text x="615" y="288" text-anchor="middle" class="s">Gemma 3 4B, grounded in</text>
+  <text x="615" y="308" text-anchor="middle" class="m">business.json · 5-15 s</text>
+
+  <!-- 5 guards -->
+  <rect x="740" y="160" width="150" height="90" rx="14" class="guard glow"/>
+  <text x="815" y="188" text-anchor="middle" class="t">Safety guards</text>
+  <text x="815" y="208" text-anchor="middle" class="s">evidence ID required</text>
+  <text x="815" y="228" text-anchor="middle" class="s">no unseen numbers</text>
+
+  <!-- 6 reply -->
+  <rect x="910" y="160" width="150" height="90" rx="14" class="local"/>
+  <text x="985" y="188" text-anchor="middle" class="t">Reply</text>
+  <text x="985" y="208" text-anchor="middle" class="s">approved templates</text>
+  <text x="985" y="228" text-anchor="middle" class="s">or grounded answer</text>
+
+  <!-- 7 TTS -->
+  <rect x="1075" y="160" width="105" height="90" rx="14" class="online"/>
+  <text x="1127" y="188" text-anchor="middle" class="t">Voice</text>
+  <text x="1127" y="208" text-anchor="middle" class="s">ElevenLabs</text>
+  <text x="1127" y="228" text-anchor="middle" class="m">→ Piper local</text>
+
+  <!-- packets -->
+  <circle r="6" fill="#8fd19e"><animateMotion dur="5s" repeatCount="indefinite"><mpath href="#upper"/></animateMotion></circle>
+  <circle r="6" fill="#ffca28"><animateMotion dur="5s" begin="1.7s" repeatCount="indefinite"><mpath href="#lower"/></animateMotion></circle>
+  <circle r="6" fill="#8fd19e"><animateMotion dur="5s" begin="3.4s" repeatCount="indefinite"><mpath href="#upper"/></animateMotion></circle>
+
+  <!-- legend -->
+  <g transform="translate(30,436)">
+    <rect width="22" height="14" rx="4" class="local"/><text x="30" y="12" class="lg">local, offline</text>
+    <rect x="140" width="22" height="14" rx="4" class="online"/><text x="170" y="12" class="lg">online, optional, with fallback</text>
+    <rect x="400" width="22" height="14" rx="4" class="guard"/><text x="430" y="12" class="lg">guardrail</text>
+    <rect x="530" width="22" height="14" rx="4" class="route"/><text x="560" y="12" class="lg">routing</text>
+  </g>
+</svg>

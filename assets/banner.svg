@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="300" viewBox="0 0 1200 300" role="img" aria-label="Co-op Voice Assistant: offline multilingual Small AI">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1b120e"/>
+      <stop offset="0.55" stop-color="#2b1d16"/>
+      <stop offset="1" stop-color="#10261a"/>
+    </linearGradient>
+    <linearGradient id="title" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#f3d9b1"/>
+      <stop offset="0.5" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#8fd19e"/>
+      <animateTransform attributeName="gradientTransform" type="translate" values="-1 0;1 0;-1 0" dur="8s" repeatCount="indefinite"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#2e7d32" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#2e7d32" stop-opacity="0"/>
+    </radialGradient>
+    <style>
+      .bar { fill: #8fd19e; transform-box: fill-box; transform-origin: center; animation: pulse 1.2s ease-in-out infinite; }
+      .bar.b { fill: #f3d9b1; }
+      @keyframes pulse { 0%, 100% { transform: scaleY(0.25); } 50% { transform: scaleY(1); } }
+      .chip { font: 600 15px 'Segoe UI', Inter, Helvetica, Arial, sans-serif; fill: #e8f5e9; letter-spacing: 1.5px; }
+      .sub { font: 400 21px 'Segoe UI', Inter, Helvetica, Arial, sans-serif; fill: #d7ccc8; }
+      .ttl { font: 800 52px 'Segoe UI', Inter, Helvetica, Arial, sans-serif; }
+      .fade { animation: fade 3s ease-in-out infinite alternate; }
+      @keyframes fade { from { opacity: 0.55; } to { opacity: 1; } }
+      .dot { animation: blink 1.4s steps(2, start) infinite; }
+      @keyframes blink { to { visibility: hidden; } }
+    </style>
+  </defs>
+
+  <rect width="1200" height="300" rx="22" fill="url(#bg)"/>
+  <circle cx="1030" cy="150" r="190" fill="url(#glow)" class="fade"/>
+
+  <text x="60" y="118" class="ttl" fill="url(#title)">Co-op Voice Assistant</text>
+  <text x="62" y="160" class="sub">Offline, multilingual Small AI that answers callers and knows when it doesn't know.</text>
+
+  <g transform="translate(62,196)">
+    <rect width="150" height="34" rx="17" fill="#2e7d32" fill-opacity="0.35" stroke="#8fd19e" stroke-opacity="0.6"/>
+    <text x="75" y="22" text-anchor="middle" class="chip">RUNS OFFLINE</text>
+    <rect x="166" width="140" height="34" rx="17" fill="#5d4037" fill-opacity="0.5" stroke="#f3d9b1" stroke-opacity="0.6"/>
+    <text x="236" y="22" text-anchor="middle" class="chip">5 LANGUAGES</text>
+    <rect x="322" width="170" height="34" rx="17" fill="#1565c0" fill-opacity="0.35" stroke="#90caf9" stroke-opacity="0.6"/>
+    <text x="407" y="22" text-anchor="middle" class="chip">PHONE + WEB</text>
+    <rect x="508" width="196" height="34" rx="17" fill="#c62828" fill-opacity="0.3" stroke="#ef9a9a" stroke-opacity="0.6"/>
+    <text x="606" y="22" text-anchor="middle" class="chip">EVIDENCE OR ABSTAIN</text>
+  </g>
+
+  <g transform="translate(905,150)">
+    <rect class="bar"   x="0"   y="-60" width="12" height="120" rx="6" style="animation-delay:0s"/>
+    <rect class="bar b" x="22"  y="-80" width="12" height="160" rx="6" style="animation-delay:-0.15s"/>
+    <rect class="bar"   x="44"  y="-45" width="12" height="90"  rx="6" style="animation-delay:-0.3s"/>
+    <rect class="bar b" x="66"  y="-90" width="12" height="180" rx="6" style="animation-delay:-0.45s"/>
+    <rect class="bar"   x="88"  y="-65" width="12" height="130" rx="6" style="animation-delay:-0.6s"/>
+    <rect class="bar b" x="110" y="-35" width="12" height="70"  rx="6" style="animation-delay:-0.75s"/>
+    <rect class="bar"   x="132" y="-75" width="12" height="150" rx="6" style="animation-delay:-0.9s"/>
+    <rect class="bar b" x="154" y="-50" width="12" height="100" rx="6" style="animation-delay:-1.05s"/>
+    <rect class="bar"   x="176" y="-85" width="12" height="170" rx="6" style="animation-delay:-0.2s"/>
+    <rect class="bar b" x="198" y="-40" width="12" height="80"  rx="6" style="animation-delay:-0.5s"/>
+  </g>
+
+  <circle cx="1146" cy="40" r="6" fill="#ef5350" class="dot"/>
+  <text x="1134" y="45" text-anchor="end" class="chip" fill="#ffcdd2">LOCAL INFERENCE</text>
+</svg>

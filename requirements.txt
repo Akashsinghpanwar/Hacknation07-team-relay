@@ -1,0 +1,6 @@
+faster-whisper==1.2.1
+gradio==6.29.1
+piper-tts==1.8.0
+fastapi==0.142.2
+uvicorn==0.54.0
+python-multipart==0.0.32

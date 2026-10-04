@@ -1,0 +1,40 @@
+{
+  "note": "SYNTHETIC DEMO PROFILE. Replace this file with any business's real, approved information.",
+  "name": "Demo Co-op Nyeri",
+  "type": "Coffee farmers' cooperative society",
+  "location": "Main road, 2 km from the market centre, Nyeri County, Kenya",
+  "opening_hours": {
+    "monday_to_friday": "08:00 to 17:00",
+    "saturday": "08:00 to 13:00",
+    "sunday_and_public_holidays": "closed"
+  },
+  "coffee_intake": {
+    "cherry_delivery_hours": "07:00 to 15:00 on weekdays during harvest season",
+    "where": "Factory weighbridge behind the office",
+    "rule": "Cherry must be delivered on the day it is picked. Each delivery is weighed and recorded against the member number."
+  },
+  "payments": {
+    "schedule": "Members are paid monthly, on the 15th, by mobile money",
+    "advance": "Members can request an advance of up to 30 percent of their recorded deliveries",
+    "statement": "Members can get a delivery statement free of charge at the office"
+  },
+  "services": [
+    {"name": "Fertiliser on credit", "price": "Deducted from the next payment", "details": "Order at the office before the 5th of the month"},
+    {"name": "Seedling sales", "price": "KES 20 per seedling", "details": "Improved varieties, available March to May"},
+    {"name": "Agronomy visit", "price": "Free for members", "details": "Book at the office; an extension officer visits within 2 weeks"},
+    {"name": "Coffee drying and milling", "price": "Included in membership", "details": "All delivered cherry is processed at the co-op factory"}
+  ],
+  "membership": {
+    "who_can_join": "Any coffee farmer in Nyeri County",
+    "fee": "KES 500 one-time joining fee",
+    "documents": "National ID and proof of land use",
+    "how": "Visit the office during opening hours"
+  },
+  "contact": {
+    "office": "Visit the office, or press zero on this line to request a call back from an officer"
+  },
+  "policies": [
+    "The co-op never asks for passwords or mobile money PINs.",
+    "Price information is a reference only; each farmer decides whether to sell."
+  ]
+}

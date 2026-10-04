@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+build/
+dist/
+
+# Runtime data and secrets
+*.db
+.env
+*.env
+
+# Model weights and fine-tuning outputs
+models/
+voices/
+finetune/outputs/
+*.gguf
+*.safetensors
+*.onnx
+
+# Source brief is marked "Official Use Only" - never publish it
+*.pdf
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
