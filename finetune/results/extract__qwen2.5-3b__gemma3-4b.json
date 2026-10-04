@@ -1,0 +1,169 @@
+{
+  "report": {
+    "extract_model": "qwen2.5:3b",
+    "qa_model": "gemma3:4b",
+    "samples": 37,
+    "extract_intent_accuracy": 1.0,
+    "extract_exact_match": 0.811,
+    "extract_avg_seconds": 9.9,
+    "qa_found_accuracy": null,
+    "qa_grounded_rate": null,
+    "qa_avg_seconds": null
+  },
+  "failures": [
+    {
+      "task": "extract",
+      "input": "Someone offered me 130 for my parchment in Kiambu, what do you think?",
+      "want": {
+        "intent": "PRICE_CHECK",
+        "quote": 130,
+        "currency": null,
+        "unit": null,
+        "product_form": "parchment",
+        "grade": null,
+        "district": "Kiambu"
+      },
+      "got": {
+        "intent": "PRICE_CHECK",
+        "quote": 130,
+        "currency": "KES",
+        "unit": "kilo",
+        "product_form": "parchment",
+        "grade": null,
+        "district": "Kiambu"
+      }
+    },
+    {
+      "task": "extract",
+      "input": "He offered 200 per bag for grade A parchment in Nyeri.",
+      "want": {
+        "intent": "PRICE_CHECK",
+        "quote": 200,
+        "currency": null,
+        "unit": "bag",
+        "product_form": "parchment",
+        "grade": "A",
+        "district": "Nyeri"
+      },
+      "got": {
+        "intent": "PRICE_CHECK",
+        "quote": 200,
+        "currency": "KES",
+        "unit": "bag",
+        "product_form": "parchment",
+        "grade": "A",
+        "district": "Nyeri"
+      }
+    },
+    {
+      "task": "extract",
+      "input": "He offered 60 per bag for grade B parchment in Kiambu.",
+      "want": {
+        "intent": "PRICE_CHECK",
+        "quote": 60,
+        "currency": null,
+        "unit": "bag",
+        "product_form": "parchment",
+        "grade": "B",
+        "district": "Kiambu"
+      },
+      "got": {
+        "intent": "PRICE_CHECK",
+        "quote": 60,
+        "currency": "KES",
+        "unit": "bag",
+        "product_form": "parchment",
+        "grade": "B",
+        "district": "Kiambu"
+      }
+    },
+    {
+      "task": "extract",
+      "input": "A trader wants to pay 155 per kilo for my cherry here in Murang'a.",
+      "want": {
+        "intent": "PRICE_CHECK",
+        "quote": 155,
+        "currency": null,
+        "unit": "kg",
+        "product_form": "cherry",
+        "grade": null,
+        "district": "Murang'a"
+      },
+      "got": {
+        "intent": "PRICE_CHECK",
+        "quote": 155,
+        "currency": "KES",
+        "unit": "kilo",
+        "product_form": "cherry",
+        "grade": null,
+        "district": "Murang'a"
+      }
+    },
+    {
+      "task": "extract",
+      "input": "Wanunuzi wanalipa shilingi 220 kwa kilo ya matunda ya kahawa huko Nyeri.",
+      "want": {
+        "intent": "PRICE_CHECK",
+        "quote": 220,
+        "currency": "KES",
+        "unit": "kg",
+        "product_form": "cherry",
+        "grade": null,
+        "district": "Nyeri"
+      },
+      "got": {
+        "intent": "PRICE_CHECK",
+        "quote": 220,
+        "currency": "shillings",
+        "unit": "kilo",
+        "product_form": null,
+        "grade": null,
+        "district": "Nyeri"
+      }
+    },
+    {
+      "task": "extract",
+      "input": "Wanunuzi wanalipa shilingi 130 kwa kilo ya matunda ya kahawa huko Kiambu.",
+      "want": {
+        "intent": "PRICE_CHECK",
+        "quote": 130,
+        "currency": "KES",
+        "unit": "kg",
+        "product_form": "cherry",
+        "grade": null,
+        "district": "Kiambu"
+      },
+      "got": {
+        "intent": "PRICE_CHECK",
+        "quote": 130,
+        "currency": "shillings",
+        "unit": "kilo",
+        "product_form": null,
+        "grade": null,
+        "district": "Kiambu"
+      }
+    },
+    {
+      "task": "extract",
+      "input": "Wanunuzi wanalipa shilingi 60 kwa kilo ya matunda ya kahawa huko Kirinyaga.",
+      "want": {
+        "intent": "PRICE_CHECK",
+        "quote": 60,
+        "currency": "KES",
+        "unit": "kg",
+        "product_form": "cherry",
+        "grade": null,
+        "district": "Kirinyaga"
+      },
+      "got": {
+        "intent": "PRICE_CHECK",
+        "quote": 60,
+        "currency": "shillings",
+        "unit": "kilo",
+        "product_form": null,
+        "grade": null,
+        "district": "Kirinyaga"
+      }
+    }
+  ]
+}

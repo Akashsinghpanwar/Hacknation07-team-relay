@@ -43,7 +43,8 @@ calls = {}
 jobs = {}
 
 PROMPTS = {
-    "greeting": "Hi, thanks for calling Demo Co-op Nyeri. This is a demo line, so all information is sample data. "
+    "greeting": "Hi, thanks for calling Demo Co-op Nyeri. I'm Relay, the co-op's assistant. "
+                "This is a demo line, so all information is sample data. "
                 "You can ask me anything about the co-op, or check a buyer's coffee price, in your own language. "
                 "Go ahead after the beep. And if you'd like a person, just press zero.",
     "hold": "Sure, give me a moment.",

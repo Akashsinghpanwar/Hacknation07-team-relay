@@ -6,7 +6,7 @@ from coop_assistant.core import decision as engine
 from coop_assistant.core.responses import SUPPORTED, render
 from coop_assistant.core.store import connect
 from coop_assistant.nlu import business_qa as qa
-from coop_assistant.nlu.extract import normalize
+from coop_assistant.nlu.extract import normalize, regex_extract
 from coop_assistant.pipeline import Assistant
 
 TODAY = dt.date(2026, 10, 4)
@@ -80,6 +80,20 @@ class GuardTests(unittest.TestCase):
     def test_unknown_unit_is_ignored_not_clarified(self):
         _, s = normalize({"intent": "PRICE_CHECK", "unit": "cherries"}, "")
         self.assertIsNone(s["unit"])
+
+    def test_llm_cannot_add_unspoken_form_or_grade(self):
+        _, s = normalize({"intent": "PRICE_CHECK", "quote": 105, "product_form": "parchment", "grade": "A",
+                          "district": "Nyeri"}, "The buyer offered 105 shillings for coffee in Nyeri")
+        self.assertEqual((s["product_form"], s["grade"], s["quote"]), (None, None, 105.0))
+
+    def test_hindi_spoken_grade_letter(self):
+        said = "व्यापारी ने Nyeri में ग्रेड ए पार्चमेंट के लिए 105 बोला"
+        _, s = normalize(regex_extract(said), said)
+        self.assertEqual(s["grade"], "A")
+
+    def test_control_tokens_are_stripped_from_answers(self):
+        with mock.patch.object(qa, "_ask", return_value={"found": True, "answer": "We open at 08:00. “ <start_of_image>"}):
+            self.assertEqual(qa.answer("When do you open?", "en"), ("ANSWER", "We open at 08:00."))
 
     def test_non_latin_district_does_not_match_everything(self):
         _, s = normalize({"intent": "PRICE_CHECK", "district": "न्येरी"}, "")

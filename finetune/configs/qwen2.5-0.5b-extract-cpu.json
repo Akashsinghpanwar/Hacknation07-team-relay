@@ -1,0 +1,14 @@
+{
+  "base": "Qwen/Qwen2.5-0.5B-Instruct",
+  "out": "finetune/outputs/qwen2.5-0.5b-extract-lora",
+  "task": "extract",
+  "epochs": 1,
+  "lr": 0.0003,
+  "batch": 4,
+  "grad_accum": 2,
+  "max_len": 1024,
+  "r": 16,
+  "alpha": 32,
+  "dropout": 0.05,
+  "merge": true
+}

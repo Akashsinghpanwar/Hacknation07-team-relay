@@ -8,7 +8,7 @@ import shutil
 import subprocess
 import sys
 
-from coop_assistant.config import EXTRACT_MODEL, MODEL_DIR, PIPER_VOICES, QA_MODEL
+from coop_assistant.config import EXTRACT_FALLBACK_MODEL, MODEL_DIR, PIPER_VOICES, QA_MODEL
 
 
 def main():
@@ -32,9 +32,10 @@ def main():
     if not ollama:
         print("Ollama not found: install it from https://ollama.com, then rerun or run `ollama pull` yourself.")
         return
-    for model in dict.fromkeys([EXTRACT_MODEL, QA_MODEL]):
+    for model in dict.fromkeys([EXTRACT_FALLBACK_MODEL, QA_MODEL]):
         subprocess.run([ollama, "pull", model], check=True)
-    print("Ollama models: ok")
+    print("Ollama models: ok. Build the fine-tuned 'coop-extract' with finetune/README.md; until then "
+          f"extraction falls back to {EXTRACT_FALLBACK_MODEL}.")
 
 
 if __name__ == "__main__":

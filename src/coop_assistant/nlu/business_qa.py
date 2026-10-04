@@ -1,6 +1,7 @@
 """General business questions, answered only from the business profile by the local LLM."""
 
 import json
+import re
 import urllib.request
 
 from coop_assistant.config import BUSINESS_FILE, OLLAMA_URL, QA_MODEL
@@ -53,7 +54,8 @@ def answer(question, lang):
         data = _ask(question, lang)
     except (OSError, ValueError, KeyError):
         return "NO_INFO", None
-    text = (data.get("answer") or "").strip()
+    # Small models sometimes leak control tokens such as <start_of_image> or a stray quote at the end.
+    text = re.sub(r"<[^<>]{1,40}>", "", data.get("answer") or "").strip().strip("\"“”'").strip()
     if not data.get("found") or not text:
         return "NO_INFO", None
     if not numbers_in(text) <= numbers_in(PROFILE) | numbers_in(question):

@@ -11,7 +11,9 @@ DB_PATH = pathlib.Path(os.environ.get("DB_PATH", MODEL_DIR / "prices.db"))
 BUSINESS_FILE = pathlib.Path(os.environ.get("BUSINESS_FILE", PROJECT_ROOT / "data" / "business.json"))
 
 OLLAMA_URL = os.environ.get("OLLAMA_URL", "http://localhost:11434")
-EXTRACT_MODEL = os.environ.get("OLLAMA_MODEL", "qwen2.5:3b")
+# Fine-tuned 0.5B extractor (finetune/), with the zero-shot 3B as fallback when it is not installed.
+EXTRACT_MODEL = os.environ.get("OLLAMA_MODEL", "coop-extract")
+EXTRACT_FALLBACK_MODEL = os.environ.get("OLLAMA_FALLBACK_MODEL", "qwen2.5:3b")
 QA_MODEL = os.environ.get("QA_MODEL", "gemma3:4b")
 
 WHISPER_SIZE = os.environ.get("WHISPER_SIZE", "small")

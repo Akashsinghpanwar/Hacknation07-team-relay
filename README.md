@@ -1,14 +1,15 @@
 <p align="center">
-  <img src="assets/banner.svg" alt="Co-op Voice Assistant: offline multilingual Small AI" width="100%"/>
+  <img src="assets/banner.svg" alt="Relay: offline multilingual Small AI" width="100%"/>
 </p>
 
 <p align="center">
   <img alt="Python" src="https://img.shields.io/badge/python-3.10%2B-3776AB?logo=python&logoColor=white">
   <img alt="Speech" src="https://img.shields.io/badge/STT-faster--whisper-2e7d32">
-  <img alt="LLM" src="https://img.shields.io/badge/LLM-Qwen2.5%203B%20%7C%20Gemma%203%204B-5d4037">
+  <img alt="LLM" src="https://img.shields.io/badge/LLM-fine--tuned%20Qwen2.5%200.5B%20%7C%20Gemma%203%204B-5d4037">
+  <img alt="Fine-tune" src="https://img.shields.io/badge/fine--tune-94.6%25%20exact%20match-2e7d32">
   <img alt="Runtime" src="https://img.shields.io/badge/runtime-Ollama%20(local)-000000">
   <img alt="TTS" src="https://img.shields.io/badge/TTS-Piper%20%7C%20ElevenLabs-1565c0">
-  <img alt="Tests" src="https://img.shields.io/badge/tests-26%20passing-brightgreen">
+  <img alt="Tests" src="https://img.shields.io/badge/tests-29%20passing-brightgreen">
   <img alt="Status" src="https://img.shields.io/badge/status-hackathon%20prototype-orange">
 </p>
 
@@ -19,14 +20,92 @@
 
 ---
 
-A **Small AI** voice assistant built for the *2026 Small AI for Development Hackathon* (agriculture track). A laptop at a farmers' cooperative works as a local **AI hub**. Farmers call it from any phone or use a browser. It answers questions about the co-op and checks a buyer's coffee price offer against dated records. Speech recognition, understanding, the decision logic and the data all run on the hub with no internet. The AI never makes the farmer's decision, and every number it speaks comes from stored data, never from a model.
+**Relay** is a **Small AI** voice assistant built for the *2026 Small AI for Development Hackathon* (agriculture track). It relays what a farmer says, in her own language, to the co-op's records and back, or to a person when the records can't answer. A laptop at a farmers' cooperative works as a local **AI hub**. Farmers call it from any phone or use a browser. It answers questions about the co-op and checks a buyer's coffee price offer against dated records. Speech recognition, understanding, the decision logic and the data all run on the hub with no internet. The AI never makes the farmer's decision, and every number it speaks comes from stored data, never from a model.
 
 > [!IMPORTANT]
 > All prices and the business profile are **synthetic demo data**. Nothing here is a live market price.
 
+## Results at a glance
+
+| 🎯 Fine-tuned exact match | ⚡ Seconds per sentence | 📦 Extractor size | 🌍 Languages | 📴 Internet needed for the core | ✅ Tests |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| **94.6%**<br/><sub>vs 81.1% for the 3B it replaced</sub> | **3.3 s**<br/><sub>vs 9.9 s, 3× faster</sub> | **0.53 GB**<br/><sub>vs 1.9 GB, 3.6× smaller</sub> | **5**<br/><sub>EN · SW · HI · ZH · KO</sub> | **none**<br/><sub>verified with network blocked</sub> | **29**<br/><sub>passing</sub> |
+
+<p align="center">
+  <img src="assets/results.svg" alt="Animated bar charts: exact match 56.8% base, 94.6% fine-tuned, 81.1% 3B; 3.4 s, 3.3 s, 9.9 s per sentence; 0.40, 0.53, 1.93 GB" width="100%"/>
+</p>
+
+<p align="center">
+  <img src="assets/per_language.svg" alt="Animated grouped bars: exact match per language for base 0.5B, fine-tuned and 3B" width="100%"/>
+</p>
+
+<details>
+<summary><b>▶ Real conversations from the executed notebooks</b> (click to open)</summary>
+
+<br/>
+
+**Price check, English** (`ANSWER`, evidence `DEMO-NYR-PARCH-A`)
+> 🧑‍🌾 *Buyer offered 105 for parchment coffee in Nyeri*<br/>
+> 🤖 Please tell me the grade.<br/>
+> 🧑‍🌾 *grade A*<br/>
+> 🤖 Just so you know, this is demo data. According to Demo Co-op Nyeri's records from October 2, parchment coffee grade A in Nyeri is going for 120 shillings a kilo. So the 105 you were offered is 15 shillings below that. It's your call whether to sell, and do confirm the grade and moisture with your co-op.
+
+**Price check, Swahili**
+> 🤖 [DATA YA MAJARIBIO] Bei ya marejeleo ya kahawa ya parchment daraja A huko Nyeri ni KES 120 kwa kilo (Demo Co-op Nyeri, tarehe 2026-10-02, chanzo: SYNTHETIC DEMO FIXTURE). Bei ya mnunuzi ya 105 iko chini kwa KES 15 kuliko bei hii. Hii ni taarifa tu; uamuzi wa kuuza ni wako.
+
+**Out-of-date record** (`ABSTAIN`, no number given)
+> 🧑‍🌾 *Parchment grade A in Kiambu*<br/>
+> 🤖 Just so you know, this is demo data. My latest record for Kiambu is from 2026-08-20 and is out of date, so I cannot give a current price. Please check with your co-op.
+
+**Business question, Hindi** (Gemma 3 4B, grounded in `business.json`)
+> 🧑‍🌾 *मुझे एडवांस पैसे मिल सकते हैं क्या?* (Can I get an advance?)<br/>
+> 🤖 सदस्य अपने रिकॉर्ड किए गए डिलीवरी के विरुद्ध अधिकतम 30 प्रतिशत की अग्रिम राशि का अनुरोध कर सकते हैं। भुगतान मासिक, 15 तारीख को मोबाइल मनी के माध्यम से किया जाता है।
+
+**Not in the profile** (`ABSTAIN`)
+> 🧑‍🌾 *Do you sell tractors?*<br/>
+> 🤖 Sorry, I don't have that information. I can ask an officer to call you back.
+
+**Asks for a person** (`REFER`)
+> 🧑‍🌾 *Can I talk to somebody please?*<br/>
+> 🤖 With your permission, a co-op officer will call you back.
+
+</details>
+
+<details>
+<summary><b>▶ What exactly was fine-tuned?</b></summary>
+
+<br/>
+
+| | |
+|---|---|
+| Task | One caller sentence → JSON slots `intent, quote, currency, unit, product_form, grade, district` |
+| Base | `Qwen/Qwen2.5-0.5B-Instruct` (Apache-2.0, 494M parameters) |
+| Data | 215 train / 37 held-out rows, **synthetic**, made from 12 templates in 5 languages with random prices, grades and districts. Labels are generated by code ([`generate_dataset.py`](finetune/generate_dataset.py)) |
+| Method | LoRA r 16 / α 32 on all attention and MLP projections; loss on the JSON answer only |
+| Compute | 1 epoch, 27 steps, **40.5 min on a laptop CPU**, no GPU |
+| Loss | 0.072 at step 10 → 0.0067 at step 20; eval loss 0.0031 |
+| Export | merged → llama.cpp GGUF **q8_0 (0.53 GB)** → `ollama create coop-extract` |
+| Caveat | Eval rows share templates with training, so this shows task format and vocabulary, not real-caller accuracy |
+
+Full details: [MODEL_CARD.md](finetune/MODEL_CARD.md) · reproduce: [finetune/README.md](finetune/README.md) · charts: [notebook 03](notebooks/03_finetuning.ipynb)
+
+</details>
+
+```mermaid
+xychart-beta
+  title "All-slot exact match on 37 held-out sentences (%)"
+  x-axis ["base 0.5B", "fine-tuned 0.5B (ours)", "zero-shot 3B"]
+  y-axis "exact match %" 0 --> 100
+  bar [56.8, 94.6, 81.1]
+```
+
 ## Contents
 
+- [Results at a glance](#results-at-a-glance)
 - [Highlights](#highlights)
+- [Hackathon readiness](#hackathon-readiness)
+- [What we built](#what-we-built)
+- [Notebooks](#notebooks)
 - [Architecture](#architecture)
 - [Decision contract](#decision-contract)
 - [Safety guardrails](#safety-guardrails)
@@ -51,6 +130,53 @@ A **Small AI** voice assistant built for the *2026 Small AI for Development Hack
 | 🧾 **Evidence or abstain** | A price answer needs a matching, in-date record with enough samples, and it carries an evidence ID. Anything else gets a clarifying question, an abstention or a hand-off to a person |
 | 🏪 **Any business** | General questions are answered only from `data/business.json`. Swap the file to serve a shop, clinic or tour operator |
 | 🔊 **Natural voice, safe fallback** | ElevenLabs when online, local Piper voices when not. Switching is automatic |
+
+## Hackathon readiness
+
+Every rule and deliverable in the brief, with where the evidence is. `python scripts/readiness_check.py` re-checks them automatically, with all non-local network traffic blocked, and writes [`docs/READINESS_REPORT.md`](docs/READINESS_REPORT.md).
+
+| Brief requirement | How it is met | Evidence |
+|---|---|---|
+| Runs on a device the user already has | Farmers use the phone they own (a call) or a shared smartphone browser. The AI runs on the co-op's existing laptop | [Phone channel](#phone-channel) |
+| Core feature works offline | STT, LLMs, engine, data and voice run locally | Readiness check runs the pipeline with internet blocked |
+| Model files small enough to sideload | Largest model 3.3 GB; fine-tuned extractor about 0.5 GB (8-bit GGUF) | [Models](#models-footprint-and-latency), [MODEL_CARD](finetune/MODEL_CARD.md) |
+| Named local language, and how it fares in a less-supported one | **Swahili**, plus Hindi, Chinese, Korean and English. Gĩkũyũ assessed honestly | [DATA_CARD §4](docs/DATA_CARD.md#4-named-local-language-and-a-less-supported-one) |
+| A person makes the final call; uncertainty is flagged; no hallucination | `CLARIFY` / `ABSTAIN` / `REFER`, evidence IDs, number guards | [Safety guardrails](#safety-guardrails) |
+| Cite data sources, license, size; label synthetic | Every dataset and model listed | [DATA_CARD §2](docs/DATA_CARD.md#2-data-we-build-with) |
+| State what the data does not cover (scored) | Eight explicit gaps | [DATA_CARD §3](docs/DATA_CARD.md#3-what-this-data-does-not-cover) |
+| Fine-tuning / quantisation (glossary) | LoRA fine-tune of Qwen2.5-0.5B on CPU → GGUF q8_0 → Ollama | [finetune/](finetune/) |
+| Prototype + 2–5 min video with problem statement | Problem sentence and full video script | [SUBMISSION.md](docs/SUBMISSION.md) |
+
+## What we built
+
+Everything below runs in this repository, and every number was measured on the build laptop (Intel Core Ultra 5 CPU, no GPU).
+
+| # | Step | Result |
+|---|---|---|
+| 1 | **Read the brief and designed for its rules** | One sector (agriculture), one decision (is this buyer's price fair?), offline core, named language, human in the loop. Original notes in [`docs/planning/`](docs/planning/) |
+| 2 | **Deterministic decision engine** over dated SQLite records | Four states with mandatory evidence IDs; abstains on stale, sparse, mismatched or missing data |
+| 3 | **Approved replies in 5 languages** | English, Hindi, Swahili, Chinese, Korean; numbers only from data |
+| 4 | **Understanding layer**: rules first, local LLM for gaps | Multilingual keywords and digits, plus a JSON-schema LLM call and a guard that drops any price the caller didn't say |
+| 5 | **Speech**: faster-whisper + Piper, ElevenLabs optional | Language ID was correct for all 5 languages in a round-trip test. Fully local fallback voice |
+| 6 | **Grounded business Q&A** with Gemma 3 4B | Answers from `business.json`, blocks invented numbers, says "I don't know" otherwise. Tested in English, Hindi, Chinese, Swahili |
+| 7 | **Web demo** (Gradio) | Shows transcript, extracted fields, decision state, evidence and internet status |
+| 8 | **Phone channel**: FastAPI + Twilio + Cloudflare tunnel | HMAC-verified webhooks, hold-and-redirect while the hub thinks, press 0 for a person, call-back mode. A live call from a real phone reached the laptop and played the greeting; full turns were tested with signed simulated requests |
+| 9 | **Fine-tuned our own model** | Qwen2.5-0.5B + LoRA on CPU → GGUF → Ollama `coop-extract`: **94.6%** exact match vs **81.1%** for the 3B it replaced, 3× faster, 3.6× smaller |
+| 10 | **Data card, model card, submission pack** | Sources, licenses, sizes, synthetic labels, what the data does not cover, problem statement, video script |
+| 11 | **Readiness check** | `scripts/readiness_check.py` re-verifies the brief's rules with the internet blocked → [`docs/READINESS_REPORT.md`](docs/READINESS_REPORT.md) |
+| 12 | **Executed notebooks** | Five notebooks with real outputs walk through every layer → [`notebooks/`](notebooks/) |
+
+## Notebooks
+
+Executed, with their outputs saved, so they can be read on GitHub without running anything:
+
+| Notebook | Shows |
+|---|---|
+| [`01_pipeline_walkthrough`](notebooks/01_pipeline_walkthrough.ipynb) | Evidence store → decision engine (all states) → replies in 5 languages → rules + LLM extraction → number guard → business Q&A → a full conversation |
+| [`02_speech_offline`](notebooks/02_speech_offline.ipynb) | Piper voices with audio players, a Whisper round trip in 5 languages, and voice in → answer → voice out **with the internet blocked** |
+| [`03_finetuning`](notebooks/03_finetuning.ipynb) | Dataset, LoRA training-loss curve, GGUF/Ollama export, base vs fine-tuned vs 3B charts |
+| [`04_phone_channel`](notebooks/04_phone_channel.ipynb) | Simulated Twilio call: forged request rejected, greeting, recording, hold, answer audio, press 0 |
+| [`05_readiness_check`](notebooks/05_readiness_check.ipynb) | The full readiness report against the brief |
 
 ## Architecture
 
@@ -173,6 +299,7 @@ Every turn returns one of four states:
 
 - **Numbers come from data, never from a model.** Price replies are filled from the SQLite record and the caller's own words. If a business answer contains any number missing from both the profile and the question, it is replaced with "I don't have that information".
 - **A price must actually be spoken.** If the LLM extracts a price whose digits are not in the transcript, the price is dropped.
+- **So must the coffee form and grade.** Notebook 02 showed why. Whisper dropped "parchment", and the fine-tuned model filled it back in from habit. That was right by luck, so now any form or grade the caller didn't say is dropped, and the assistant asks instead.
 - **Evidence ID on every price answer.** It is shown in the web UI so a reviewer can trace each answer to its record.
 - **Abstain when unsure.** Out-of-date records, fewer than 3 samples, a mismatched grade or currency, or no record at all mean no number is given.
 - **A human is always available.** Saying "officer", "somebody" and similar words, or pressing 0 on a call, hands over to a person.
@@ -182,6 +309,9 @@ Every turn returns one of four states:
 - **The farmer decides.** Price replies say the information is for the farmer to weigh, not advice to sell.
 
 ## Repository layout
+
+<details open>
+<summary><b>Folder tree</b></summary>
 
 ```text
 .
@@ -202,13 +332,30 @@ Every turn returns one of four states:
 │       ├── call_server.py     # FastAPI + Twilio webhooks
 │       └── call_me.py         # call-back mode
 ├── data/business.json         # swappable business profile (demo)
-├── finetune/                  # dataset generator, LoRA training, evaluation, Ollama export
-├── tests/test_core.py         # 26 unit tests
-├── scripts/                   # start_call.ps1, set_secrets.ps1, download_models.py
-├── docs/                      # planning notes, knowledge graph, architecture-doc prompt
+├── finetune/
+│   ├── generate_dataset.py    # synthetic multilingual SFT data, labels made by code
+│   ├── train_lora.py          # LoRA SFT (CPU or GPU), prompt/completion loss
+│   ├── export_ollama.py       # merged model → GGUF (llama.cpp) → ollama create
+│   ├── evaluate.py            # exact-match / grounding metrics against Ollama models
+│   ├── configs/ data/ results/
+│   └── MODEL_CARD.md
+├── notebooks/                 # 5 executed walkthroughs (pipeline, speech, fine-tune, phone, readiness)
+├── tests/test_core.py         # 29 unit tests
+├── scripts/
+│   ├── readiness_check.py     # brief rules + deliverables, offline-enforced
+│   ├── download_models.py     # one-time model download
+│   ├── start_call.ps1         # tunnel + Twilio webhook + call server
+│   └── set_secrets.ps1        # store credentials without echoing them
+├── docs/
+│   ├── DATA_CARD.md           # sources, licenses, sizes, what the data does not cover
+│   ├── SUBMISSION.md          # problem statement + video script
+│   ├── READINESS_REPORT.md    # generated by readiness_check.py
+│   └── planning/              # original design notes and knowledge graph
 ├── assets/                    # animated SVGs used in this README
 └── tools/extract_pdf_text.py  # dependency-free PDF text extractor
 ```
+
+</details>
 
 ## Quick start
 
@@ -220,7 +367,7 @@ cd Hacknation07-team-spa-
 pip install -e .
 
 python scripts/download_models.py     # Whisper small, 5 Piper voices, qwen2.5:3b, gemma3:4b
-python -m unittest discover -s tests  # 26 tests
+python -m unittest discover -s tests  # 29 tests
 python -m coop_assistant.apps.web_ui  # http://127.0.0.1:7860
 ```
 
@@ -259,12 +406,18 @@ python -m coop_assistant.apps.call_me --url <public_url> --to +<caller> --from +
 
 ## Configuration
 
+<details>
+<summary><b>▶ All environment variables</b> (every setting has a working default)</summary>
+
+<br/>
+
 | Variable | Default | Purpose |
 |---|---|---|
 | `MODEL_DIR` | `%LOCALAPPDATA%/coffee-price-ai` | Whisper models, Piper voices, SQLite file |
 | `BUSINESS_FILE` | `data/business.json` | Business profile used for Q&A |
 | `OLLAMA_URL` | `http://localhost:11434` | Ollama endpoint |
-| `OLLAMA_MODEL` | `qwen2.5:3b` | Slot extraction model |
+| `OLLAMA_MODEL` | `coop-extract` | Slot extraction model (our fine-tune) |
+| `OLLAMA_FALLBACK_MODEL` | `qwen2.5:3b` | Used automatically if `OLLAMA_MODEL` is not installed |
 | `QA_MODEL` | `gemma3:4b` | Business Q&A model |
 | `WHISPER_SIZE` | `small` | `large-v3-turbo` is more accurate but about 3× slower |
 | `ELEVENLABS_API_KEY` | unset | Turns on cloud voice. Without it, Piper only |
@@ -274,6 +427,8 @@ python -m coop_assistant.apps.call_me --url <public_url> --to +<caller> --from +
 | `TWILIO_ACCOUNT_SID` / `TWILIO_AUTH_TOKEN` | unset | Phone channel |
 | `TWILIO_PHONE_NUMBER` | unset | Number whose webhook is set on start |
 | `PUBLIC_URL` | set by `start_call.ps1` | Public tunnel URL |
+
+</details>
 
 ## Data
 
@@ -300,26 +455,49 @@ source_name, source_contact, usage_permission, imported_at
 | Component | Model | Size on disk | Measured per turn (Intel Core Ultra 5 CPU, no GPU) |
 |---|---|---|---|
 | Speech-to-text + language ID | faster-whisper `small`, int8 | 0.75 GB with all 5 voices | 4–6 s |
-| Slot extraction | rules, then `qwen2.5:3b` only if fields are missing | 1.9 GB | ~0 s with rules, 5–10 s with the LLM |
-| Business Q&A | `gemma3:4b` | 3.3 GB | 5–15 s |
+| Slot extraction | rules, then **`coop-extract`** (our fine-tuned Qwen2.5-0.5B, GGUF q8_0) only if fields are missing; `qwen2.5:3b` as fallback | 0.53 GB | ~0 s with rules, ~3.3 s with the LLM |
+| Business Q&A | `gemma3:4b` | 3.3 GB | 10–35 s |
 | Decision + templates | Python + SQLite | < 1 MB | instant |
 | Text-to-speech | Piper `medium` voices / ElevenLabs | included above | ~3 s for Piper, network-bound for ElevenLabs |
 
-Model choice: `qwen2.5:3b` answered Hindi, Swahili and Chinese business questions poorly ("not found", or broken Swahili). `gemma3:4b` answered them correctly at about twice the latency, so it handles Q&A. Extraction stays on the faster Qwen.
+Model choices:
+- **Q&A:** `qwen2.5:3b` answered Hindi, Swahili and Chinese business questions poorly ("not found", or broken Swahili). `gemma3:4b` answered them correctly at about twice the latency, so it handles Q&A.
+- **Extraction:** our fine-tuned 0.5B model beat the zero-shot 3B on accuracy, speed and size, so it replaced it (see below).
 
 ## Fine-tuning
 
-[`finetune/`](finetune/) holds a reproducible path to smaller, faster task-specific models:
+The brief's glossary names **fine-tuning** and **quantisation**. We ran both, end to end, on a laptop CPU with no GPU:
 
-```bash
-python finetune/generate_dataset.py                                    # 240 train / 43 eval, labels made by code
-python finetune/evaluate.py --extract-model qwen2.5:3b --qa-model gemma3:4b   # baseline
-python finetune/train_lora.py --config finetune/configs/qwen2.5-1.5b-lora.json  # GPU
+```mermaid
+flowchart LR
+  A[business.json +<br/>12 templates × 5 languages] --> B[generate_dataset.py<br/>283 rows, labels by code]
+  B --> C[train_lora.py<br/>Qwen2.5-0.5B-Instruct + LoRA<br/>1 epoch · 40 min · CPU]
+  C --> D[merge] --> E[export_ollama.py<br/>llama.cpp → GGUF q8_0, 0.53 GB]
+  E --> F[ollama create<br/>coop-extract]
+  F --> G[evaluate.py<br/>37 held-out rows]
+  G --> H[default extractor<br/>in the app]
 ```
 
-**Baseline (zero-shot, 43 held-out rows):** extraction intent accuracy is **100%** and all-slot exact match is **81.1%**. Every miss is either a currency or unit the caller never said, or Swahili *matunda ya kahawa* (coffee cherries) not recognised. Q&A found/not-found accuracy and grounding are both **100%**.
+| Model | Size | Intent | All-slot exact match | s / sentence |
+|---|---|---|---|---|
+| `qwen2.5:0.5b`, same base, no fine-tune | 0.40 GB | 94.6% | 56.8% | 3.4 |
+| **`coop-extract`, fine-tuned** | **0.53 GB** | **97.3%** | **94.6%** | **3.3** |
+| `qwen2.5:3b`, zero-shot, previous default | 1.9 GB | 100% | 81.1% | 9.9 |
 
-The LoRA script has **not been run yet** (no GPU on the build machine). See [finetune/README.md](finetune/README.md) for the hyper-parameters and the GGUF/Ollama export.
+**Fine-tuning took the 0.5B base from 56.8% to 94.6% exact match.** That beats the 3B it replaced, runs 3× faster per sentence, and is 3.6× smaller on disk. The 3B's misses were all currencies or units the caller never said, plus the Swahili *matunda ya kahawa* (coffee cherries). The fine-tune fixed the Swahili word and almost all of the made-up details.
+
+> [!CAUTION]
+> The eval rows come from the same templates as the training rows, so this measures task format and vocabulary, not accuracy on real callers. The training data is synthetic. See [MODEL_CARD.md](finetune/MODEL_CARD.md) and [DATA_CARD.md](docs/DATA_CARD.md).
+
+Reproduce it with:
+
+```bash
+pip install -e ".[finetune]"
+python finetune/generate_dataset.py
+python finetune/train_lora.py --config finetune/configs/qwen2.5-0.5b-extract-cpu.json
+python finetune/export_ollama.py --merged finetune/outputs/qwen2.5-0.5b-extract-lora/merged --name coop-extract
+python finetune/evaluate.py --task extract --extract-model coop-extract
+```
 
 ## Testing and evaluation
 
@@ -327,9 +505,12 @@ The LoRA script has **not been run yet** (no GPU on the build machine). See [fin
 python -m unittest discover -s tests -v
 ```
 
-The 26 tests cover:
+The 29 tests cover:
 - every decision state
 - the number guard on extraction and on Q&A
+- the LLM being unable to add a coffee form or grade the caller never said
+- stripping leaked model control tokens
+- Hindi spoken grade letters (ग्रेड ए → A)
 - unknown units
 - all 5 languages producing every outcome with exact numbers
 - two-turn clarification
@@ -343,7 +524,7 @@ The phone flow was also tested end to end with HMAC-signed simulated Twilio requ
 
 - Speech accuracy varies by language. Swahili, Chinese and Korean need testing with real speakers. In one synthetic test Whisper heard "105" as "150" in Chinese, so every price reply repeats the offer it heard.
 - Hindi, Swahili, Chinese and Korean reply templates need review by native speakers. Gemma's Swahili answers are understandable but not polished.
-- Business Q&A takes 5–15 s per turn on CPU. The caller hears a hold prompt while it runs.
+- Business Q&A takes 10–35 s per turn on CPU. The caller hears a hold prompt while it runs.
 - The phone channel needs internet. The hub is local edge inference, not inference on the farmer's own handset.
 - All data is synthetic. A pilot needs a dated price feed that a cooperative or market partner allows us to use.
 
@@ -351,7 +532,8 @@ The phone flow was also tested end to end with HMAC-signed simulated Twilio requ
 
 - [ ] Real price feed from a partner cooperative, with usage permission
 - [ ] Native-speaker review of templates; consented real-caller test set split by gender and accent
-- [ ] Run the LoRA fine-tune and switch to a 1–1.5B model if it matches accuracy
+- [x] Fine-tune a small extractor and switch to it (done: `coop-extract`, 0.5B)
+- [ ] Re-train it on consented real transcripts, more epochs, GPU; add Q&A fine-tuning in all five languages
 - [ ] Local SIM/GSM gateway + Asterisk, so calls need no internet while mobile voice coverage exists
 - [ ] Android on-device build (whisper.cpp + llama.cpp) for shared household smartphones
 - [ ] Crop-advice questions routed to extension officers

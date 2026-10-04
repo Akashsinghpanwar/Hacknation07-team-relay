@@ -30,7 +30,8 @@ A smallholder coffee farmer in rural Kenya (fictional persona "Amani") is offere
 | 1 | Input | Microphone or typed text in a local web app (Gradio); or a phone call (Twilio) | Local / phone online | - |
 | 2 | Speech to text + language ID | faster-whisper "small", int8, domain hotwords (Nyeri, parchment, grade A...) | Local, offline | ~4-6 s per question |
 | 3 | Slot extraction, rules first | Multilingual keyword and number rules | Local, offline | ~0 s |
-| 4 | Slot extraction, LLM only if rules leave gaps | Qwen2.5 3B via Ollama, JSON-schema output, temperature 0 | Local, offline | ~5-10 s |
+| 4 | Slot extraction, LLM only if rules leave gaps | Our fine-tuned Qwen2.5-0.5B (`coop-extract`, GGUF q8_0) via Ollama, JSON-schema output, temperature 0; Qwen2.5 3B fallback | Local, offline | ~3.3 s |
+| 4b | Business questions | Gemma 3 4B grounded in a business profile; blocks invented numbers | Local, offline | 10-35 s |
 | 5 | Safety guard on extraction | A price is accepted only if those digits were actually spoken; unknown units ignored | Local | - |
 | 6 | Decision engine | Deterministic Python rules | Local | instant |
 | 7 | Evidence store | SQLite, 4 synthetic records with full provenance fields | Local | instant |
@@ -38,7 +39,7 @@ A smallholder coffee farmer in rural Kenya (fictional persona "Amani") is offere
 | 9 | Text to speech | ElevenLabs (online, optional) with automatic fallback to Piper voices (local) for en/hi/sw/zh/ko; Swahili always local | Online optional / local fallback | ~3 s (Piper) |
 | 10 | Output | Spoken answer + screen showing transcript, extracted fields, decision state and the evidence record ID | Local | - |
 
-**Footprint:** Whisper small + 5 Piper voices about 0.8 GB; Qwen2.5 3B about 1.9 GB. Everything is pre-downloaded; the core runs with Wi-Fi off. No paid cloud AI is needed for the core.
+**Footprint:** Whisper small + 5 Piper voices about 0.75 GB; fine-tuned extractor 0.53 GB; Gemma 3 4B 3.3 GB. Everything is pre-downloaded; the core runs with Wi-Fi off. No paid cloud AI is needed for the core.
 
 **Decision states (the safety contract):**
 - **ANSWER** - only with a matching record (same district, coffee form, grade, unit kg, currency KES), inside its validity window and with at least 3 samples. Carries a mandatory evidence ID.
@@ -69,7 +70,9 @@ Record fields: id, country, district, market, crop, product_form, grade, currenc
 - Security: every Twilio request is signature-checked (HMAC); unsigned requests get 403; audio files have random names; secrets live only in environment variables.
 - Status: tested end to end with simulated signed Twilio requests and recorded audio. The Cloudflare tunnel was verified reachable from the internet. A live call was blocked because the Twilio trial account only allows Twilio's own demo templates; upgrading the account removes this.
 
-**Testing evidence:** 19 automated tests pass (all decision states, the number guard, multilingual rendering with exact numbers, two-turn clarification, out-of-scope handling). Round-trip test synthesised a question in each language and transcribed it back: language ID correct in all 5.
+**Fine-tuning evidence:** LoRA fine-tune of Qwen2.5-0.5B on 215 synthetic rows (CPU, 40 min) → GGUF q8_0 0.53 GB. On 37 held-out synthetic rows: all-slot exact match 94.6% vs 56.8% for the un-tuned 0.5B and 81.1% for the zero-shot 3B; 3.3 s vs 9.9 s per sentence. The eval shares templates with training, so it is not a field-accuracy estimate.
+
+**Testing evidence:** 29 automated tests pass (all decision states, the number guard, multilingual rendering with exact numbers, two-turn clarification, out-of-scope handling). Round-trip test synthesised a question in each language and transcribed it back: language ID correct in all 5.
 
 **Honest limits (must appear in the document):**
 - Speech accuracy varies by language; Swahili, Chinese and Korean need real-speaker testing. In one synthetic test Whisper heard "105" as "150" in Chinese, which is why every reply repeats the offer it heard so the farmer can catch errors.
@@ -80,7 +83,7 @@ Record fields: id, country, district, market, crop, product_form, grade, currenc
 
 ## Document outline
 
-1. **Cover** - title "Coffee Price Check: a Small AI that knows when it doesn't know", subtitle "Offline, multilingual price reference for smallholder farmers", hero image (Image 1).
+1. **Cover** - title "Relay: a Small AI that knows when it doesn't know", subtitle "Offline, multilingual price reference for smallholder farmers", hero image (Image 1).
 2. **The problem** - Amani's story in 4 short beats; why a price list by SMS is not enough (she speaks, in her language, about her own offer).
 3. **Solution at a glance** - one sentence, Figure 1, three bullets on what is local.
 4. **End-to-end pipeline** - Figure 2 with the stage table above.

@@ -52,14 +52,14 @@
   <!-- 4a price engine -->
   <rect x="525" y="82" width="180" height="88" rx="14" class="local glow"/>
   <text x="615" y="108" text-anchor="middle" class="t">Price engine</text>
-  <text x="615" y="128" text-anchor="middle" class="s">rules → Qwen2.5 3B if gaps</text>
+  <text x="615" y="128" text-anchor="middle" class="s">rules → fine-tuned 0.5B</text>
   <text x="615" y="148" text-anchor="middle" class="m">SQLite dated records</text>
 
   <!-- 4b business QA -->
   <rect x="525" y="242" width="180" height="88" rx="14" class="local glow"/>
   <text x="615" y="268" text-anchor="middle" class="t">Business Q&amp;A</text>
   <text x="615" y="288" text-anchor="middle" class="s">Gemma 3 4B, grounded in</text>
-  <text x="615" y="308" text-anchor="middle" class="m">business.json · 5-15 s</text>
+  <text x="615" y="308" text-anchor="middle" class="m">business.json · 10-35 s</text>
 
   <!-- 5 guards -->
   <rect x="740" y="160" width="150" height="90" rx="14" class="guard glow"/>

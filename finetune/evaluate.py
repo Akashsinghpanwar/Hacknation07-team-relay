@@ -33,10 +33,12 @@ def main():
     parser.add_argument("--extract-model", default="qwen2.5:3b")
     parser.add_argument("--qa-model", default="gemma3:4b")
     parser.add_argument("--limit", type=int, default=0, help="0 = all samples")
+    parser.add_argument("--task", choices=["all", "extract", "qa"], default="all")
     parser.add_argument("--out", default=str(HERE / "results"))
     args = parser.parse_args()
 
     rows = [json.loads(line) for line in open(args.data, encoding="utf-8")]
+    rows = [r for r in rows if args.task in ("all", r["task"])]
     rows = rows[: args.limit] if args.limit else rows
     stats = {"extract": {"n": 0, "intent": 0, "exact": 0, "secs": 0.0},
              "qa": {"n": 0, "found_ok": 0, "found": 0, "grounded": 0, "secs": 0.0}}
@@ -80,7 +82,7 @@ def main():
     }
     out = pathlib.Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
-    name = f"{args.extract_model}__{args.qa_model}".replace(":", "-").replace("/", "-")
+    name = f"{args.task}__{args.extract_model}__{args.qa_model}".replace(":", "-").replace("/", "-")
     (out / f"{name}.json").write_text(json.dumps({"report": report, "failures": failures}, indent=2,
                                                   ensure_ascii=False), encoding="utf-8")
     print(json.dumps(report, indent=2))

@@ -1,0 +1,59 @@
+{
+  "report": {
+    "extract_model": "coop-extract",
+    "qa_model": "gemma3:4b",
+    "samples": 37,
+    "extract_intent_accuracy": 0.973,
+    "extract_exact_match": 0.946,
+    "extract_avg_seconds": 3.3,
+    "qa_found_accuracy": null,
+    "qa_grounded_rate": null,
+    "qa_avg_seconds": null
+  },
+  "failures": [
+    {
+      "task": "extract",
+      "input": "A trader wants to pay 155 per kilo for my cherry here in Murang'a.",
+      "want": {
+        "intent": "PRICE_CHECK",
+        "quote": 155,
+        "currency": null,
+        "unit": "kg",
+        "product_form": "cherry",
+        "grade": null,
+        "district": "Murang'a"
+      },
+      "got": {
+        "currency": "KES",
+        "district": "Murang'a",
+        "grade": null,
+        "intent": "PRICE_CHECK",
+        "product_form": "cherry",
+        "quote": 155,
+        "unit": "kg"
+      }
+    },
+    {
+      "task": "extract",
+      "input": "Naomba kuongea na afisa wa ushirika.",
+      "want": {
+        "intent": "HUMAN",
+        "quote": null,
+        "currency": null,
+        "unit": null,
+        "product_form": null,
+        "grade": null,
+        "district": null
+      },
+      "got": {
+        "currency": null,
+        "district": null,
+        "grade": null,
+        "intent": "UNKNOWN",
+        "product_form": null,
+        "quote": null,
+        "unit": null
+      }
+    }
+  ]
+}

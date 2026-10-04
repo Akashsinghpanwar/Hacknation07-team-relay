@@ -4,10 +4,10 @@ The assistant uses two LLM calls, both through Ollama:
 
 | Task | Today | What fine-tuning should buy |
 |---|---|---|
-| **extract**: turn a caller's sentence (any of 5 languages) into `intent, quote, currency, unit, product_form, grade, district` | `qwen2.5:3b`, zero-shot, JSON schema | A 1–1.5B model with the same accuracy, so a turn takes about half the time and fits a phone later |
+| **extract**: turn a caller's sentence (any of 5 languages) into `intent, quote, currency, unit, product_form, grade, district` | **`coop-extract`** (fine-tuned 0.5B, this folder); previously `qwen2.5:3b` zero-shot | Done: 94.6% vs 81.1% exact match, 3× faster, 3.6× smaller |
 | **qa**: answer from `data/business.json` or say `found: false` | `gemma3:4b`, zero-shot, JSON schema | Fewer false "not found", fewer invented details, shorter spoken answers |
 
-> **Status:** the dataset generator and the evaluation run in this repo. The LoRA training script is written but **has not been run yet**: there was no GPU on the build machine. No fine-tuned weights are published.
+> **Status:** the whole loop has been run end to end on a laptop CPU: dataset → LoRA fine-tune of Qwen2.5-0.5B → merge → GGUF q8_0 → Ollama `coop-extract` → evaluation. It is a proof of the pipeline, not a tuned production model; see [MODEL_CARD.md](MODEL_CARD.md). Weights are rebuilt locally, not committed.
 
 ## Pipeline
 
@@ -52,7 +52,7 @@ The evaluation scores outputs after the app's own `normalize()` step, so it meas
 
 | Task | Model | Samples | Metric | Result | Avg time |
 |---|---|---|---|---|---|
-| extract | `qwen2.5:3b` | 37 | intent accuracy | **100%** | 7.8 s |
+| extract | `qwen2.5:3b` | 37 | intent accuracy | **100%** | 7.8–9.9 s |
 | extract | `qwen2.5:3b` | 37 | exact match, all slots | **81.1%** (30/37) | |
 | qa | `gemma3:4b` | 6 | found / not-found accuracy | **100%** | 21.2 s* |
 | qa | `gemma3:4b` | 6 | answers using only profile numbers | **100%** | |
@@ -64,13 +64,20 @@ All 7 extraction failures fall into two patterns, and both are what fine-tuning 
 1. **Filling in details nobody said**: it outputs `currency: KES` (5 cases) or a unit (1 case) when the caller gave neither.
 2. **Swahili vocabulary**: *matunda ya kahawa* (coffee cherries) was not recognised as `cherry` (3 cases).
 
-## 3. Train (GPU)
+## 3. Train
 
 ```bash
-pip install -e ".[finetune]"
+pip install -e ".[finetune]"          # CPU-only PyTorch: pip install torch --index-url https://download.pytorch.org/whl/cpu
+
+# CPU, what was actually run (about 45 min on a 12-thread laptop):
+python finetune/train_lora.py --config finetune/configs/qwen2.5-0.5b-extract-cpu.json
+
+# GPU, larger bases:
 python finetune/train_lora.py --config finetune/configs/qwen2.5-1.5b-lora.json
-# or: --config finetune/configs/gemma3-1b-lora.json
+python finetune/train_lora.py --config finetune/configs/gemma3-1b-lora.json
 ```
+
+Each row is split into prompt and completion, so the loss is only computed on the assistant's JSON, never on the system prompt.
 
 | Setting | Value |
 |---|---|
@@ -83,25 +90,32 @@ python finetune/train_lora.py --config finetune/configs/qwen2.5-1.5b-lora.json
 
 A free Colab T4 is enough for 1–1.5B models with this setup.
 
-## 4. Export to Ollama
+## 4. Quantise and export to Ollama
 
 ```bash
-git clone https://github.com/ggml-org/llama.cpp
-python llama.cpp/convert_hf_to_gguf.py finetune/outputs/qwen2.5-1.5b-coop-lora/merged \
-       --outfile finetune/outputs/coop-qwen2.5-1.5b-f16.gguf
-llama.cpp/build/bin/llama-quantize finetune/outputs/coop-qwen2.5-1.5b-f16.gguf \
-       finetune/outputs/coop-qwen2.5-1.5b-q4_k_m.gguf Q4_K_M
-ollama create coop-extract -f finetune/Modelfile
+python finetune/export_ollama.py --merged finetune/outputs/qwen2.5-0.5b-extract-lora/merged --name coop-extract
 ```
+
+The script clones llama.cpp once, converts the merged model with `convert_hf_to_gguf.py --outtype q8_0` (8-bit), and runs `ollama create`. It goes through GGUF because Ollama's direct safetensors import rejects the Qwen2 architecture (`unsupported MLX architecture`). For 4-bit `Q4_K_M`, build llama.cpp's `llama-quantize` and run it on an `f16` export.
 
 ## 5. Compare and switch
 
 ```bash
-python finetune/evaluate.py --extract-model coop-extract --qa-model gemma3:4b
-set OLLAMA_MODEL=coop-extract        # Windows (PowerShell: $env:OLLAMA_MODEL="coop-extract")
+python finetune/evaluate.py --task extract --extract-model coop-extract
+$env:OLLAMA_MODEL = "coop-extract"     # PowerShell; the app then uses the fine-tuned model
 ```
 
 Only switch if exact match is at least as good as the baseline **and** the average time per turn drops.
+
+## Results of the run in this repo
+
+| Model | Size | Intent | All-slot exact match | s / sentence |
+|---|---|---|---|---|
+| `qwen2.5:0.5b` (no fine-tune) | 0.40 GB | 94.6% | 56.8% | 3.4 |
+| **`coop-extract`** (0.5B + LoRA, q8_0) | **0.53 GB** | **97.3%** | **94.6%** | **3.3** |
+| `qwen2.5:3b` (zero-shot) | 1.9 GB | 100% | 81.1% | 9.9 |
+
+It switched: `coop-extract` is now the app's default extractor (`OLLAMA_MODEL`). If it isn't installed, the app falls back to `qwen2.5:3b` automatically. Details, the two remaining errors, and why these synthetic-set numbers are not field accuracy are in [MODEL_CARD.md](MODEL_CARD.md). Training curve and charts: [`notebooks/03_finetuning.ipynb`](../notebooks/03_finetuning.ipynb).
 
 ## Known gaps in the data
 

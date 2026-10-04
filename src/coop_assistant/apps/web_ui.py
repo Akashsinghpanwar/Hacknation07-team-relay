@@ -68,8 +68,8 @@ def reset(bot):
     return bot, "", "", "", "", None, None, None
 
 
-with gr.Blocks(title="Coffee Price Check - offline demo") as demo:
-    gr.Markdown("# Coffee price check (offline Small AI demo)\n"
+with gr.Blocks(title="Relay - offline demo") as demo:
+    gr.Markdown("# Relay: co-op assistant and coffee price check (offline Small AI demo)\n"
                 "Speak or type a buyer's offer in English, Hindi, Swahili, Chinese or Korean. "
                 "**All prices are synthetic DEMO data.** The farmer always makes the final decision.")
     bot = gr.State(None)

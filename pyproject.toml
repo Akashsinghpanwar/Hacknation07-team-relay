@@ -3,7 +3,7 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "coop-assistant"
+name = "relay-assistant"
 version = "0.1.0"
 description = "Offline, multilingual Small AI voice assistant for farmer cooperatives and small businesses"
 readme = "README.md"
@@ -28,8 +28,8 @@ finetune = [
 ]
 
 [project.scripts]
-coop-web = "coop_assistant.apps.web_ui:main"
-coop-call = "coop_assistant.apps.call_server:main"
+relay-web = "coop_assistant.apps.web_ui:main"
+relay-call = "coop_assistant.apps.call_server:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

@@ -2,9 +2,10 @@
 
 import json
 import re
+import urllib.error
 import urllib.request
 
-from coop_assistant.config import EXTRACT_MODEL, OLLAMA_URL
+from coop_assistant.config import EXTRACT_FALLBACK_MODEL, EXTRACT_MODEL, OLLAMA_URL
 from coop_assistant.core.store import DISTRICTS
 
 SCHEMA = {
@@ -69,9 +70,14 @@ def _norm_currency(value):
     return v.strip().upper()
 
 
+SPOKEN_GRADES = {"ए": "A", "बी": "B", "सी": "C"}
+
+
 def _norm_grade(value):
     if not value:
         return None
+    if value.strip() in SPOKEN_GRADES:
+        return SPOKEN_GRADES[value.strip()]
     m = re.search(r"\b([A-Ca-c])\b", value) or re.fullmatch(r"\s*([A-Ca-c])\s*", value)
     return m.group(1).upper() if m else None
 
@@ -87,20 +93,27 @@ def normalize(raw, transcript):
             quote = None
     if quote is not None and quote not in said:
         quote = None
+    # Like the price, coffee form and grade are kept only if the caller actually said them.
+    text = transcript.lower()
     form = raw.get("product_form")
+    if form not in FORM_WORDS or not re.search(FORM_WORDS[form], text):
+        form = None
+    grade = _norm_grade(raw.get("grade"))
+    if grade and _spoken_grade(text) != grade:
+        grade = None
     return intent, {
         "quote": quote,
         "currency": _norm_currency(raw.get("currency")),
         "unit": _norm_unit(raw.get("unit")),
-        "product_form": form if form in ("cherry", "parchment") else None,
-        "grade": _norm_grade(raw.get("grade")),
+        "product_form": form,
+        "grade": grade,
         "district": _norm_district(raw.get("district")),
     }
 
 
-def llm_extract(transcript, timeout=60):
+def _chat(model, transcript, timeout):
     body = json.dumps({
-        "model": EXTRACT_MODEL,
+        "model": model,
         "stream": False,
         "keep_alive": "30m",
         "format": SCHEMA,
@@ -110,6 +123,15 @@ def llm_extract(transcript, timeout=60):
     req = urllib.request.Request(f"{OLLAMA_URL}/api/chat", body, {"Content-Type": "application/json"})
     with urllib.request.urlopen(req, timeout=timeout) as resp:
         return json.loads(json.loads(resp.read())["message"]["content"])
+
+
+def llm_extract(transcript, timeout=60):
+    try:
+        return _chat(EXTRACT_MODEL, transcript, timeout)
+    except urllib.error.HTTPError as e:
+        if e.code != 404 or EXTRACT_MODEL == EXTRACT_FALLBACK_MODEL:
+            raise
+        return _chat(EXTRACT_FALLBACK_MODEL, transcript, timeout)
 
 
 HUMAN_WORDS = (r"human|person|somebody|someone|officer|operator|agent|talk to|speak to|इंसान|अधिकारी|व्यक्ति|किसी से बात"
@@ -123,6 +145,12 @@ COFFEE_WORDS = r"coffee|kahawa|parchment|cherry|cherries|कॉफ़ी|कॉ�
 PRICE_WORDS =r"price|rate|offer|bei|भाव|रेट|दाम|价格|出价|가격"
 
 
+def _spoken_grade(text):
+    m = (re.search(r"(?:grade|daraja|ग्रेड)\s*([abc]|ए|बी|सी)(?![a-z])", text)
+         or re.search(r"(?<![a-z])([abc])\s*(?:级|등급)", text))
+    return _norm_grade(m.group(1)) if m else None
+
+
 def regex_extract(transcript):
     text = transcript.lower()
     if re.search(HUMAN_WORDS, text):
@@ -132,9 +160,7 @@ def regex_extract(transcript):
     raw["product_form"] = next((f for f, p in FORM_WORDS.items() if re.search(p, text)), None)
     pricey = re.search(PRICE_WORDS, text) or nums or raw["product_form"]
     raw["intent"] = "PRICE_CHECK" if pricey else "UNKNOWN"
-    grade = (re.search(r"(?:grade|daraja|ग्रेड)\s*([abc])(?![a-z])", text)
-             or re.search(r"(?<![a-z])([abc])\s*(?:级|등급)", text))
-    raw["grade"] = grade.group(1) if grade else None
+    raw["grade"] = _spoken_grade(text)
     raw["district"] = next((name for key, name in DISTRICTS.items() if key in re.sub(r"[^a-z]", "", text)), None)
     unit = re.search(r"kg|kilo|किलो|公斤|킬로|bag|sack|gunia|debe", text)
     raw["unit"] = unit.group(0) if unit else None

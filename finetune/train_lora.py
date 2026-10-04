@@ -1,9 +1,10 @@
 """LoRA supervised fine-tuning of a small instruct model on finetune/data/*.jsonl (chat format).
 
-Needs a CUDA GPU (a free Colab T4 is enough for 1.5B) and: pip install -e ".[finetune]"
+Runs on CPU for 0.5B models (about 20 min for the extract task on a laptop) or on a CUDA GPU for 1.5B+.
+Install: pip install -e ".[finetune]"
 Usage:
-  python finetune/train_lora.py --config finetune/configs/qwen2.5-1.5b-lora.json
-  python finetune/train_lora.py --base Qwen/Qwen2.5-1.5B-Instruct --epochs 3 --merge
+  python finetune/train_lora.py --config finetune/configs/qwen2.5-0.5b-extract-cpu.json
+  python finetune/train_lora.py --config finetune/configs/qwen2.5-1.5b-lora.json   (GPU)
 """
 
 import argparse
@@ -30,6 +31,8 @@ DEFAULTS = {
     "r": 16,
     "alpha": 32,
     "dropout": 0.05,
+    "task": "all",
+    "max_steps": -1,
     "merge": False,
 }
 
@@ -53,10 +56,16 @@ def parse():
 def main():
     cfg = parse()
     print(json.dumps(cfg, indent=2))
-    data = load_dataset("json", data_files={"train": cfg["train"], "eval": cfg["eval"]}).remove_columns("task")
+    data = load_dataset("json", data_files={"train": cfg["train"], "eval": cfg["eval"]})
+    if cfg["task"] != "all":
+        data = data.filter(lambda row: row["task"] == cfg["task"])
+    # Prompt/completion split so the loss is computed on the assistant's JSON only, not the system prompt.
+    data = data.map(lambda row: {"prompt": row["messages"][:-1], "completion": row["messages"][-1:]},
+                    remove_columns=["messages", "task"])
+    print({split: len(rows) for split, rows in data.items()}, "rows")
 
     tokenizer = AutoTokenizer.from_pretrained(cfg["base"])
-    model = AutoModelForCausalLM.from_pretrained(cfg["base"], torch_dtype="auto", device_map="auto")
+    model = AutoModelForCausalLM.from_pretrained(cfg["base"], dtype="auto" if torch.cuda.is_available() else torch.float32)
     lora = LoraConfig(
         r=cfg["r"], lora_alpha=cfg["alpha"], lora_dropout=cfg["dropout"], task_type="CAUSAL_LM",
         target_modules=["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"],
@@ -65,14 +74,16 @@ def main():
     args = SFTConfig(
         output_dir=cfg["out"],
         num_train_epochs=cfg["epochs"],
+        max_steps=cfg["max_steps"],
+        use_cpu=not torch.cuda.is_available(),
         learning_rate=cfg["lr"],
         per_device_train_batch_size=cfg["batch"],
         gradient_accumulation_steps=cfg["grad_accum"],
         lr_scheduler_type="cosine",
-        warmup_ratio=0.05,
+        warmup_steps=0.05,
         max_length=cfg["max_len"],
         logging_steps=10,
-        eval_strategy="epoch",
+        eval_strategy="epoch" if torch.cuda.is_available() else "no",
         save_strategy="epoch",
         save_total_limit=1,
         bf16=bf16,
@@ -82,6 +93,7 @@ def main():
     trainer = SFTTrainer(model=model, args=args, train_dataset=data["train"], eval_dataset=data["eval"],
                          peft_config=lora, processing_class=tokenizer)
     trainer.train()
+    print("final eval:", trainer.evaluate())
     trainer.save_model(cfg["out"])
     tokenizer.save_pretrained(cfg["out"])
     print("LoRA adapter saved to", cfg["out"])
