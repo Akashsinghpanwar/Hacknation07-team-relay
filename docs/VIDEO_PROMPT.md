@@ -1,126 +1,138 @@
 # 60-second technical video: prompts and script
 
+Technical content only: architecture, models, guardrails, fine-tuning and evidence. No story scenes or people.
+
 Three ways to use this file:
 
 - **All-in-one AI video tool** (InVideo AI, HeyGen, Synthesia, Pictory): paste the **master prompt**.
-- **Clip generator** (Veo, Sora, Runway, Kling): generate the **six B-roll shots** one by one, then cut them together with the voiceover.
-- **Most accurate (recommended):** AI B-roll for the human scenes, plus the repo's **real** charts and a **real screen recording** for every number and UI shot. AI video tools invent text and numbers on screens, so don't let them draw the results.
+- **Clip generator** (Veo, Sora, Runway, Kling): generate the **abstract motion clips** in §3, then cut them with the voiceover.
+- **Most accurate (recommended):** use the repo's **real** diagrams, terminal output and notebooks (§4) for every number and screen. AI video tools invent text on screens.
 
 ---
 
 ## 1. Master prompt (copy everything in the box)
 
 ```text
-Create a 60-second, 16:9, 1080p technical explainer video with a professional male or female
-voiceover (warm, clear, confident, international English, ~160 words per minute) and subtle
-modern ambient-electronic background music that ducks under the voice.
+Create a 60-second, 16:9, 1080p TECHNICAL explainer video. Motion graphics and screen-style
+visuals only: no people, no story scenes, no stock footage of farms or offices.
+Voiceover: calm, precise, technical, international English, ~160 words per minute.
+Music: minimal ambient electronic, low, ducking under the voice.
 
-PRODUCT: "Relay" - an offline, multilingual Small AI voice assistant for farmer cooperatives.
-AUDIENCE: hackathon judges (technical). TONE: precise, human, no hype.
+PRODUCT: "Relay", an offline, multilingual Small AI voice assistant that runs on one CPU laptop.
+AUDIENCE: technical judges.
 
-VISUAL STYLE: cinematic documentary B-roll for human scenes (Kenyan coffee highlands, warm
-early-morning light, real-looking people, no brand logos on any phone or device), mixed with
-clean dark-mode motion graphics: rounded boxes, thin animated connector lines with moving
-dots, palette coffee brown #5D4037, leaf green #2E7D32 (local/offline), sky blue #1565C0
-(online/optional, dashed), amber #F9A825, red #C62828 (guardrails), indigo #3949AB (human).
-Sans-serif type (Inter). Large readable on-screen text, max 7 words per caption.
+VISUAL STYLE: dark background #14110F; flat rounded boxes; thin connector lines with moving
+dots; monospace code snippets; palette leaf green #66BB6A (local/offline), dashed sky blue
+#64B5F6 (online/optional), amber #FFCA28 (routing), red #EF5350 (guardrails), indigo
+#7986CB (human hand-off), sand #F3D9B1 (headings). Inter for text, JetBrains Mono for code.
+Captions on screen, max 7 words each.
 
 STORYBOARD AND VOICEOVER (follow timings and use the voiceover text exactly):
 
-[0:00-0:06] Close-up of a smallholder coffee farmer (woman, 40s) at a farm gate in the Kenyan
-highlands holding a basic keypad phone; a buyer beside a pickup truck with coffee sacks.
-On-screen: "105 KES/kg - fair?"
-VO: "A coffee farmer in Kenya is offered 105 shillings a kilo. Is that fair? She has a basic
-phone, and no internet."
+[0:00-0:07] Title "Relay" with a pulsing sound-wave icon, then a laptop outline labelled
+"1 CPU laptop · no GPU · no cloud". A full pipeline diagram fades in, all boxes dim.
+VO: "Relay is a voice assistant that runs entirely on one CPU laptop: no GPU, no cloud.
+Here is the pipeline."
 
-[0:06-0:14] Cut to a small cooperative office: a laptop on a wooden desk, solar battery
-beside it, coffee sacks in the corner. Title animates in: "Relay - Small AI, fully offline".
-VO: "Meet Relay: a small AI that runs on one laptop at her co-op, completely offline."
+[0:07-0:17] Highlight the first boxes in order: "Browser mic / phone (Twilio)" ->
+"faster-whisper small: speech-to-text + language ID". Five language tags pop out:
+EN, SW, HI, ZH, KO.
+VO: "Audio arrives from a browser mic or a phone call routed through Twilio. Faster-whisper
+small transcribes it and detects the language: English, Swahili, Hindi, Chinese or Korean."
 
-[0:14-0:28] Motion-graphic pipeline, left to right, boxes lighting up in sequence with a
-moving dot: "Voice in 5 languages" -> "Whisper speech-to-text + language ID" ->
-"Fine-tuned 0.5B model extracts price, type, grade, district". Show five speech bubbles in
-English, Swahili, Hindi (Devanagari), Chinese, Korean.
-VO: "She speaks in Swahili, Hindi, English, Chinese or Korean. Whisper turns her speech into
-text and detects the language. Our fine-tuned half-billion-parameter model pulls out the
-price, coffee type, grade and district."
+[0:17-0:29] An amber "Router" box splits into three paths: indigo "Person -> REFER",
+green "Price check: rules -> fine-tuned Qwen2.5 0.5B -> JSON slots", green
+"Business question: Gemma 3 4B + business.json". Show a small JSON card:
+{"quote":105,"product_form":"parchment","grade":"A","district":"Nyeri"}.
+VO: "A keyword router sends requests for a person straight to a human. Price checks use
+rules first; if fields are missing, our fine-tuned Qwen 0.5B extracts them as schema-
+constrained JSON. Business questions go to Gemma 3, grounded in one JSON profile."
 
-[0:28-0:40] Motion graphic: a database card "Co-op record - dated, sourced" feeds a "Rule
-engine" box; the numbers 120, 105 and 15 fly from the record into a speech bubble. Then a
-red guard icon and an indigo "Ask a person" box for the uncertain path.
-On-screen: "Numbers from records, never the model"
-VO: "A rule engine checks a dated co-op record, so every number she hears comes from that
-record, never from the model. If the data is old, thin or missing, Relay says 'I'm not
-sure' and connects her to a person."
+[0:29-0:40] Red "Guard" box filters slots: values not found in the transcript are struck
+through. A "Decision engine" box reads an "SQLite record · evidence ID" card and outputs
+four state chips: ANSWER (green), CLARIFY (amber), ABSTAIN (red), REFER (indigo).
+Caption: "Numbers from records, never the model".
+VO: "Guards drop any price, coffee type or grade the caller did not actually say. A
+deterministic engine answers only from a dated SQLite record with an evidence ID; otherwise
+it clarifies, abstains, or refers."
 
-[0:40-0:52] Clean animated bar chart, three bars growing: "Base 0.5B: 56.8%",
-"Fine-tuned 0.5B: 94.6%" (green, highlighted), "Zero-shot 3B: 81.1%". Small badges:
-"3x faster", "0.53 GB", "trained on a laptop CPU in 40 min".
-VO: "We fine-tuned it on a laptop CPU in forty minutes. On our synthetic test set it beats a
-three-billion-parameter model, runs three times faster, and fits in half a gigabyte."
+[0:40-0:52] Flow "LoRA SFT on CPU, 40 min" -> "merge" -> "GGUF q8_0, 0.53 GB" -> "Ollama".
+Then an animated bar chart: "Base 0.5B 56.8%", "Fine-tuned 0.5B 94.6%" (green, highlighted),
+"Zero-shot 3B 81.1%", with badges "3x faster" and "3.6x smaller".
+Footer: "Exact match on 37 held-out synthetic sentences".
+VO: "We LoRA fine-tuned the half-billion-parameter model on a laptop CPU in forty minutes,
+exported it to an eight-bit GGUF and served it with Ollama: ninety-four point six percent
+exact match versus eighty-one for a three-billion model, three times faster."
 
-[0:52-0:60] Back to the farmer, listening to her phone, then speaking confidently to the
-buyer. End card: "Relay - AI informs. The farmer decides." Small footer text:
-"Prototype - all prices shown are synthetic demo data."
-VO: "Relay informs. The farmer decides. Small AI, where people actually are."
+[0:52-0:60] Terminal-style panel: "readiness_check.py - network blocked - 26 passed,
+0 failed". Then the voice box: "Piper (local) · ElevenLabs only when online". End card:
+"Relay · local inference · evidence or abstain".
+VO: "A readiness check runs the whole pipeline with the network blocked: twenty-six checks
+pass, none fail. Voices are local Piper; ElevenLabs is optional when online."
 
-RULES: show every number exactly as written above and no other numbers; no company or
-phone logos; don't show real people's names; keep the footer disclaimer visible in the
-last shot.
+RULES: show only the numbers written above, exactly; no logos; no people; keep the
+"synthetic" footer visible in the results shot.
 ```
 
 ---
 
 ## 2. Voiceover only (for ElevenLabs)
 
-Paste into ElevenLabs Text-to-Speech, model **Multilingual v2**, stability ≈ 0.45, style ≈ 0.3. About 160 words, which is 60 s at a natural pace. If it runs long, cut "completely" and "actually".
+Paste into ElevenLabs Text-to-Speech, model **Multilingual v2**, stability ≈ 0.5, style ≈ 0.2. About 165 words, roughly 60 s. If it runs long, drop the last sentence.
 
 ```text
-A coffee farmer in Kenya is offered 105 shillings a kilo. Is that fair? She has a basic phone, and no internet.
+Relay is a voice assistant that runs entirely on one CPU laptop: no GPU, no cloud. Here is the pipeline.
 
-Meet Relay: a small AI that runs on one laptop at her co-op, completely offline.
+Audio arrives from a browser mic or a phone call routed through Twilio. Faster-whisper small transcribes it and detects the language: English, Swahili, Hindi, Chinese or Korean.
 
-She speaks in Swahili, Hindi, English, Chinese or Korean. Whisper turns her speech into text and detects the language. Our fine-tuned half-billion-parameter model pulls out the price, coffee type, grade and district.
+A keyword router sends requests for a person straight to a human. Price checks use rules first; if fields are missing, our fine-tuned Qwen 0.5B extracts them as schema-constrained JSON. Business questions go to Gemma 3, grounded in one JSON profile.
 
-A rule engine checks a dated co-op record, so every number she hears comes from that record, never from the model. If the data is old, thin or missing, Relay says "I'm not sure" and connects her to a person.
+Guards drop any price, coffee type or grade the caller did not actually say. A deterministic engine answers only from a dated SQLite record with an evidence ID; otherwise it clarifies, abstains, or refers.
 
-We fine-tuned it on a laptop CPU in forty minutes. On our synthetic test set it beats a three-billion-parameter model, runs three times faster, and fits in half a gigabyte.
+We LoRA fine-tuned the half-billion-parameter model on a laptop CPU in forty minutes, exported it to an eight-bit GGUF and served it with Ollama: ninety-four point six percent exact match versus eighty-one for a three-billion model, three times faster.
 
-Relay informs. The farmer decides. Small AI, where people actually are.
+A readiness check runs the whole pipeline with the network blocked: twenty-six checks pass, none fail. Voices are local Piper; ElevenLabs is optional when online.
 ```
 
 ---
 
-## 3. B-roll shot prompts (Veo / Sora / Runway, one clip each, 6–8 s)
+## 3. Abstract motion clips (Veo / Sora / Runway, 5–8 s each, no text)
 
-1. **Farm gate.** *Cinematic documentary shot, Kenyan highlands coffee farm at sunrise, a woman in her 40s in practical work clothes holds a simple keypad phone, looking uncertain; behind her a buyer stands by a pickup truck loaded with coffee sacks, gesturing a price with his fingers. Shallow depth of field, warm natural light, slow push-in, no logos, no text.*
-2. **Calling.** *Close-up of a weathered hand pressing keys on a basic keypad phone, ripe red coffee cherries blurred in the background, then the phone raised to her ear. Natural light, 35 mm look, no brand marks.*
-3. **Co-op hub.** *Small rural cooperative office with a mud-brick wall, a laptop open on a wooden desk next to a compact solar battery pack, jute coffee sacks in the corner, a cooperative officer typing. Soft daylight through a window, slow dolly left, screen content not readable, no logos.*
-4. **Languages.** *Five people of different backgrounds each speaking into a phone, quick match-cuts, each with a floating speech bubble in a different script (Latin, Devanagari, Chinese, Hangul). Clean, warm, documentary style.*
-5. **Officer callback.** *A cooperative officer at the desk picks up a phone and smiles while taking notes, a ledger and coffee sample bags on the desk, natural light, no logos.*
-6. **Outcome.** *The same farmer listens to her phone, nods, then speaks confidently to the buyer at the farm gate, who nods back. Golden-hour light, slow pull-out, hopeful tone, no text.*
+Use these as backgrounds behind the real diagrams. Ask for **no text** in the clips; add captions in the editor.
+
+1. **Local compute.** *Dark studio, a minimal matte laptop outline drawn in thin green light lines, small particles flowing into it from a sound-wave on the left, no internet cloud icon, slow orbit camera, no text, no logos.*
+2. **Speech to tokens.** *A glowing audio waveform morphing into a stream of small rounded tokens moving left to right on a dark background, soft green and sand colours, macro depth of field, no readable text.*
+3. **Routing.** *A single light pulse travelling along a thin line and splitting into three branches, amber, green and indigo, on a black grid, smooth camera pan, minimalist, no text.*
+4. **Guardrail.** *Particles passing through a translucent red filter plane; some particles are blocked and fade out, the rest continue as green, dark background, slow motion, no text.*
+5. **Fine-tuning.** *A small neural-network lattice glowing green while thin adapter layers slide into place, then compressing into a compact cube, dark background, elegant, no text.*
 
 ---
 
-## 4. Real visuals from this repo (use these for every technical shot)
+## 4. Real visuals from this repo (use for every technical shot)
 
-| Timecode | Use | File |
+| Timecode | Shot | Source |
 |---|---|---|
-| 0:06–0:10 | Title card | `assets/banner.svg` (open it in a browser and screen-record; it animates) |
-| 0:14–0:28 | Pipeline | `assets/pipeline.svg` (animated) |
-| 0:28–0:40 | Live demo | Screen-record `python -m coop_assistant.apps.web_ui` with Wi-Fi **off**: one price answer showing the evidence panel, then `Parchment grade A in Kiambu` → "out of date" |
-| 0:40–0:52 | Results | `assets/results.svg` and `assets/per_language.svg` (animated bars) |
-| Optional | Proof | `notebooks/02_speech_offline.ipynb` cell 3: "non-local connection attempts: none" |
+| 0:00–0:07 | Title + pipeline overview | `assets/banner.svg`, then `assets/pipeline.svg` (both animated) |
+| 0:07–0:17 | STT + language ID | `notebooks/02_speech_offline.ipynb`, the round-trip table (detected language ✔ for all 5) |
+| 0:17–0:29 | Router + JSON slots | `notebooks/01_pipeline_walkthrough.ipynb`, the extraction table (method `regex` / `llm`, slots per language); README routing flowchart |
+| 0:29–0:40 | Guards + decision states | `notebooks/01`, the decision-engine table (ANSWER / CLARIFY / ABSTAIN / REFER with evidence IDs); `notebooks/02`, the offline two-turn run (CLARIFY → ANSWER, "non-local connection attempts: none") |
+| 0:40–0:52 | Fine-tune + results | `assets/results.svg`, `assets/per_language.svg`; `notebooks/03_finetuning.ipynb` export table (coop-extract, Q8_0, 0.53 GB) |
+| 0:52–0:60 | Readiness + live UI | `docs/READINESS_REPORT.md` or `notebooks/05`; screen-record `python -m coop_assistant.apps.web_ui` with Wi-Fi off |
 
-To record an SVG animation: open the file in Edge or Chrome, press `Win + Alt + R` (Xbox Game Bar) or use the Clipchamp screen recorder.
+Optional code close-ups (2 s each, zoomed, syntax-highlighted):
+- `src/coop_assistant/nlu/extract.py`: the `normalize()` guard (`if quote is not None and quote not in said`)
+- `src/coop_assistant/core/decision.py`: the `stale` / `sparse` abstain checks
+- `src/coop_assistant/nlu/business_qa.py`: the number guard on answers
+
+To record SVG animations: open the file in Edge or Chrome and use `Win + Alt + R` or the Clipchamp screen recorder.
 
 ## 5. Assembly checklist
 
-- [ ] Voiceover first (ElevenLabs), then cut visuals to it
-- [ ] Every number on screen matches: 105 · 120 · 15 · 56.8% · 94.6% · 81.1% · 3× · 0.53 GB · 40 min
-- [ ] The "synthetic demo data" footer is visible in the final shot
-- [ ] No logos on phones or laptops; no real names
-- [ ] Captions burned in (many judges watch muted)
-- [ ] Export 1080p MP4 and add the link to `docs/SUBMISSION.md`, then re-run `python scripts/readiness_check.py`
+- [ ] Voiceover first, then cut visuals to it
+- [ ] Every number on screen matches: 5 languages · 0.5B · 40 min · 0.53 GB · 94.6% · 81.1% · 56.8% · 3× · 3.6× · 26 passed / 0 failed
+- [ ] "Exact match on 37 held-out synthetic sentences" footer visible on the results shot
+- [ ] No logos, no people
+- [ ] Captions burned in
+- [ ] Export 1080p MP4; add the link to `docs/SUBMISSION.md`, then re-run `python scripts/readiness_check.py`
 
-> This is the 60-second technical cut. The brief's submission video must be 2–5 minutes and cover five parts; the full script is in [`SUBMISSION.md`](SUBMISSION.md).
+> This is the 60-second technical cut. The brief's submission video is 2–5 minutes and needs five parts, including the problem statement; that script is in [`SUBMISSION.md`](SUBMISSION.md).
