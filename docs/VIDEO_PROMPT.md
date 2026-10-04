@@ -18,7 +18,8 @@ visuals only: no people, no story scenes, no stock footage of farms or offices.
 Voiceover: calm, precise, technical, international English, ~160 words per minute.
 Music: minimal ambient electronic, low, ducking under the voice.
 
-PRODUCT: "Relay", an offline, multilingual Small AI voice assistant that runs on one CPU laptop.
+PRODUCT: "Relay", an offline, multilingual Small AI voice assistant in a small box at a
+business owner's home; customers reach it with an ordinary phone call to the box's SIM.
 AUDIENCE: technical judges.
 
 VISUAL STYLE: dark background #14110F; flat rounded boxes; thin connector lines with moving
@@ -29,16 +30,17 @@ Captions on screen, max 7 words each.
 
 STORYBOARD AND VOICEOVER (follow timings and use the voiceover text exactly):
 
-[0:00-0:07] Title "Relay" with a pulsing sound-wave icon, then a laptop outline labelled
-"1 CPU laptop · no GPU · no cloud". A full pipeline diagram fades in, all boxes dim.
-VO: "Relay is a voice assistant that runs entirely on one CPU laptop: no GPU, no cloud.
-Here is the pipeline."
+[0:00-0:07] Title "Relay". Then a simple line diagram: keypad phone icon -> cell tower
+("voice call, no internet") -> a house outline containing a small box labelled
+"Relay box: mini PC + SIM". Caption: "Runs at home · no GPU · no cloud".
+VO: "Relay is an AI box in a business owner's home. Customers call its SIM number from any
+phone, over the normal mobile network, with no internet."
 
-[0:07-0:17] Highlight the first boxes in order: "Browser mic / phone (Twilio)" ->
-"faster-whisper small: speech-to-text + language ID". Five language tags pop out:
-EN, SW, HI, ZH, KO.
-VO: "Audio arrives from a browser mic or a phone call routed through Twilio. Faster-whisper
-small transcribes it and detects the language: English, Swahili, Hindi, Chinese or Korean."
+[0:07-0:17] Zoom into the box; its inside becomes the pipeline. Highlight in order:
+"SIM voice modem + call handler" -> "faster-whisper small: speech-to-text + language ID".
+Five language tags pop out: EN, SW, HI, ZH, KO.
+VO: "Inside, a call handler answers, and faster-whisper transcribes the caller and detects
+the language: English, Swahili, Hindi, Chinese or Korean. All on one CPU."
 
 [0:17-0:29] An amber "Router" box splits into three paths: indigo "Person -> REFER",
 green "Price check: rules -> fine-tuned Qwen2.5 0.5B -> JSON slots", green
@@ -81,9 +83,9 @@ RULES: show only the numbers written above, exactly; no logos; no people; keep t
 Paste into ElevenLabs Text-to-Speech, model **Multilingual v2**, stability ≈ 0.5, style ≈ 0.2. About 165 words, roughly 60 s. If it runs long, drop the last sentence.
 
 ```text
-Relay is a voice assistant that runs entirely on one CPU laptop: no GPU, no cloud. Here is the pipeline.
+Relay is an AI box in a business owner's home. Customers call its SIM number from any phone, over the normal mobile network, with no internet.
 
-Audio arrives from a browser mic or a phone call routed through Twilio. Faster-whisper small transcribes it and detects the language: English, Swahili, Hindi, Chinese or Korean.
+Inside, a call handler answers, and faster-whisper transcribes the caller and detects the language: English, Swahili, Hindi, Chinese or Korean. All on one CPU.
 
 A keyword router sends requests for a person straight to a human. Price checks use rules first; if fields are missing, our fine-tuned Qwen 0.5B extracts them as schema-constrained JSON. Business questions go to Gemma 3, grounded in one JSON profile.
 
@@ -112,8 +114,8 @@ Use these as backgrounds behind the real diagrams. Ask for **no text** in the cl
 
 | Timecode | Shot | Source |
 |---|---|---|
-| 0:00–0:07 | Title + pipeline overview | `assets/banner.svg`, then `assets/pipeline.svg` (both animated) |
-| 0:07–0:17 | STT + language ID | `notebooks/02_speech_offline.ipynb`, the round-trip table (detected language ✔ for all 5) |
+| 0:00–0:07 | Title + end-to-end story | `assets/banner.svg`, then `assets/story.svg` (phone → tower → Relay box at home, animated) |
+| 0:07–0:17 | Inside the box: STT + language ID | `assets/pipeline.svg` (animated); `notebooks/02_speech_offline.ipynb`, the round-trip table (detected language ✔ for all 5) |
 | 0:17–0:29 | Router + JSON slots | `notebooks/01_pipeline_walkthrough.ipynb`, the extraction table (method `regex` / `llm`, slots per language); README routing flowchart |
 | 0:29–0:40 | Guards + decision states | `notebooks/01`, the decision-engine table (ANSWER / CLARIFY / ABSTAIN / REFER with evidence IDs); `notebooks/02`, the offline two-turn run (CLARIFY → ANSWER, "non-local connection attempts: none") |
 | 0:40–0:52 | Fine-tune + results | `assets/results.svg`, `assets/per_language.svg`; `notebooks/03_finetuning.ipynb` export table (coop-extract, Q8_0, 0.53 GB) |

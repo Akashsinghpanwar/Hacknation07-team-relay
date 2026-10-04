@@ -14,13 +14,47 @@
 </p>
 
 <p align="center">
-  <b>Ask by voice or text, in English, Hindi, Swahili, Chinese or Korean.<br/>
-  Get a grounded answer with its source, or an honest "I don't know" and a human.</b>
+  <b>Call a phone number. Talk in your own language. Get an answer from an AI box at the business owner's home.<br/>
+  No internet, no smartphone, no cloud. And an honest "I don't know, I'll get the owner" when the records can't answer.</b>
 </p>
 
 ---
 
-**Relay** is a **Small AI** voice assistant built for the *2026 Small AI for Development Hackathon* (agriculture track). It relays what a farmer says, in her own language, to the co-op's records and back, or to a person when the records can't answer. A laptop at a farmers' cooperative works as a local **AI hub**. Farmers call it from any phone or use a browser. It answers questions about the co-op and checks a buyer's coffee price offer against dated records. Speech recognition, understanding, the decision logic and the data all run on the hub with no internet. The AI never makes the farmer's decision, and every number it speaks comes from stored data, never from a model.
+## How it works, end to end
+
+<p align="center">
+  <img src="assets/story.svg" alt="End-to-end story: caller's basic phone, mobile voice network with no internet, a SIM inside the Relay box at the owner's home, six local steps, answer spoken back, owner call-back when unsure" width="100%"/>
+</p>
+
+1. **Every business owner has a small Relay box at home:** a mini PC with a SIM voice modem. The LLMs, speech models and the business's own data all run inside it.
+2. **Customers just dial the box's SIM number** from any phone. It is an ordinary voice call over the mobile network, so the caller needs no internet, no data plan and no smartphone.
+3. **The box answers on its own:** a consent prompt, then Whisper transcribes the caller's language. A fine-tuned 0.5B model and Gemma 3 understand the question, guards check it against dated records and the business profile, and Piper speaks the answer back on the same call.
+4. **When the records can't answer**, it says so and asks the owner to call back. The person always makes the final decision.
+
+| | Target deployment (the vision) | This repository today |
+|---|---|---|
+| Where the AI runs | Small box in the owner's home | Laptop CPU, the same code |
+| How a call arrives | SIM voice modem in the box, **no internet** | Twilio number + Cloudflare tunnel (needs internet) until the modem is fitted |
+| Call flow (consent → record → answer → press 0) | Asterisk on the box | ✅ Built: FastAPI call server, tested end to end with signed simulated calls; a live call from a real phone reached it |
+| Speech, understanding, records, voice | Local | ✅ Built and verified with the network blocked |
+| Fine-tuned model | Local | ✅ `coop-extract` 0.5B, 94.6% exact match |
+
+<details>
+<summary><b>▶ What goes in the box</b> (planned hardware, still to validate)</summary>
+
+<br/>
+
+| Part | Role | Note |
+|---|---|---|
+| Mini PC, x86, ≥ 16 GB RAM, ≥ 32 GB storage | Runs Whisper, the 0.5B extractor, Gemma 3 4B, SQLite and Piper | The models fit in about 4.7 GB of disk; the build laptop is an Intel Core Ultra 5 with no GPU |
+| USB LTE modem with voice support, or a 1-port GSM/LTE-to-SIP gateway | Gives the box its own phone number and audio | Must support VoLTE where 2G/3G networks have been switched off. Check the carrier allows it |
+| Asterisk (open-source PBX) | Answers the call, plays prompts, reads the keypad | Replaces Twilio; the call flow logic in `call_server.py` stays the same |
+| Small UPS or solar battery | Keeps the box answering during power cuts | |
+| Optional internet | Downloads price updates and model updates | Never needed to answer a call |
+
+</details>
+
+**Relay** is a **Small AI** voice assistant built for the *2026 Small AI for Development Hackathon* (agriculture track). It relays what a caller says, in their own language, to the business's records and back, or to a person when the records can't answer. In this prototype the business is a coffee co-op: Relay answers questions about the co-op and checks a buyer's price offer against dated records. Speech recognition, understanding, the decision logic and the data all run locally with no internet. The AI never makes the caller's decision, and every number it speaks comes from stored data, never from a model.
 
 > [!IMPORTANT]
 > All prices and the business profile are **synthetic demo data**. Nothing here is a live market price.
@@ -101,6 +135,7 @@ xychart-beta
 
 ## Contents
 
+- [How it works, end to end](#how-it-works-end-to-end)
 - [Results at a glance](#results-at-a-glance)
 - [Highlights](#highlights)
 - [Hackathon readiness](#hackathon-readiness)

@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600" role="img" aria-label="End-to-end story: a caller dials from any basic phone over the normal mobile voice network, with no internet, to a SIM inside a small Relay box at the business owner's home. The box answers, transcribes, understands, checks records and speaks the answer back. If unsure it asks the owner to call back.">
+  <defs>
+    <style>
+      .h   { font: 800 22px 'Segoe UI', Inter, Helvetica, Arial, sans-serif; fill: #f3d9b1; }
+      .sub { font: 500 14px 'Segoe UI', Inter, Helvetica, Arial, sans-serif; fill: #d7ccc8; }
+      .t   { font: 700 15px 'Segoe UI', Inter, Helvetica, Arial, sans-serif; fill: #f5f5f5; }
+      .s   { font: 400 12.5px 'Segoe UI', Inter, Helvetica, Arial, sans-serif; fill: #c8d1cb; }
+      .k   { font: 700 13px 'Segoe UI', Inter, Helvetica, Arial, sans-serif; fill: #a5d6a7; }
+      .bad { font: 700 13px 'Segoe UI', Inter, Helvetica, Arial, sans-serif; fill: #e8f5e9; letter-spacing: .5px; }
+      .note{ font: 400 12px 'Segoe UI', Inter, Helvetica, Arial, sans-serif; fill: #a1887f; }
+      .comp { fill: #16241b; stroke: #66bb6a; stroke-width: 1.6; }
+      .box  { fill: #1a2a20; stroke: #66bb6a; stroke-width: 2.4; animation: glow 2.6s ease-in-out infinite; }
+      .panel{ fill: #1c1916; stroke: #3e3530; stroke-width: 1.5; }
+      .owner{ fill: #1c1f33; stroke: #7986cb; stroke-width: 1.8; }
+      .go   { fill: none; stroke: #8fd19e; stroke-width: 3; stroke-dasharray: 7 10; animation: run 1.1s linear infinite; }
+      .back { fill: none; stroke: #f3d9b1; stroke-width: 3; stroke-dasharray: 7 10; animation: run 1.1s linear infinite; }
+      .hand { fill: none; stroke: #9fa8da; stroke-width: 2.2; stroke-dasharray: 5 7; animation: run 1.1s linear infinite; }
+      .opt  { fill: none; stroke: #64b5f6; stroke-width: 1.6; stroke-dasharray: 3 6; opacity: .7; }
+      .wave { fill: none; stroke: #ffca28; stroke-width: 2.2; stroke-linecap: round; animation: ping 1.6s ease-out infinite; }
+      @keyframes run  { to { stroke-dashoffset: -34; } }
+      @keyframes glow { 0%,100% { stroke-opacity: .55; } 50% { stroke-opacity: 1; } }
+      @keyframes ping { 0% { opacity: 0; } 30% { opacity: 1; } 100% { opacity: 0; } }
+    </style>
+  </defs>
+
+  <rect width="1200" height="600" rx="22" fill="#14110f"/>
+  <text x="30" y="44" class="h">How Relay works: a phone call to an AI box at home, no internet</text>
+  <text x="30" y="68" class="sub">Each business owner keeps a small Relay box at home. Customers call its SIM number from any phone. Everything runs inside the box.</text>
+
+  <!-- optional internet -->
+  <path class="opt" d="M1080,96 C1080,84 1094,76 1104,82 C1110,68 1134,68 1140,82 C1154,78 1166,88 1160,100 C1168,110 1156,120 1146,116 L1090,116 C1076,118 1070,102 1080,96 Z"/>
+  <text x="1120" y="134" text-anchor="middle" class="note">internet: optional</text>
+  <text x="1120" y="148" text-anchor="middle" class="note">(price updates only)</text>
+  <path class="opt" d="M1120,153 L1120,166"/>
+
+  <!-- 1: caller -->
+  <rect x="30" y="150" width="180" height="210" rx="14" class="panel"/>
+  <rect x="95" y="172" width="50" height="92" rx="9" fill="#222" stroke="#bdbdbd" stroke-width="1.6"/>
+  <rect x="102" y="180" width="36" height="22" rx="3" fill="#2e7d32" opacity=".8"/>
+  <g fill="#bdbdbd">
+    <circle cx="108" cy="214" r="3"/><circle cx="120" cy="214" r="3"/><circle cx="132" cy="214" r="3"/>
+    <circle cx="108" cy="226" r="3"/><circle cx="120" cy="226" r="3"/><circle cx="132" cy="226" r="3"/>
+    <circle cx="108" cy="238" r="3"/><circle cx="120" cy="238" r="3"/><circle cx="132" cy="238" r="3"/>
+    <circle cx="108" cy="250" r="3"/><circle cx="120" cy="250" r="3"/><circle cx="132" cy="250" r="3"/>
+  </g>
+  <text x="120" y="292" text-anchor="middle" class="t">Caller</text>
+  <text x="120" y="312" text-anchor="middle" class="s">any basic phone</text>
+  <text x="120" y="329" text-anchor="middle" class="s">no data plan, no app</text>
+  <text x="120" y="346" text-anchor="middle" class="k">speaks own language</text>
+
+  <!-- 2: tower -->
+  <rect x="240" y="150" width="180" height="210" rx="14" class="panel"/>
+  <g stroke="#bdbdbd" stroke-width="2" fill="none">
+    <path d="M330,186 L306,268 M330,186 L354,268 M312,248 L348,248 M317,226 L343,226 M322,206 L338,206 M312,248 L343,226 M348,248 L317,226"/>
+  </g>
+  <circle cx="330" cy="184" r="4" fill="#ffca28"/>
+  <path class="wave" d="M316,176 A20,20 0 0 1 344,176"/>
+  <path class="wave" d="M306,168 A32,32 0 0 1 354,168" style="animation-delay:.4s"/>
+  <text x="330" y="292" text-anchor="middle" class="t">Mobile network</text>
+  <text x="330" y="312" text-anchor="middle" class="s">an ordinary voice call</text>
+  <text x="330" y="329" text-anchor="middle" class="s">to the box's SIM number</text>
+  <text x="330" y="346" text-anchor="middle" class="k">no internet needed</text>
+
+  <!-- 3: home + relay box -->
+  <path d="M450,182 L810,108 L1172,182" fill="none" stroke="#c69c6d" stroke-width="2.5" stroke-linejoin="round"/>
+  <rect x="460" y="182" width="702" height="320" fill="#171310" stroke="#c69c6d" stroke-width="2"/>
+  <text x="482" y="208" class="t" fill="#f3d9b1">Business owner's home or co-op office</text>
+
+  <rect x="478" y="222" width="666" height="210" rx="16" class="box"/>
+  <text x="498" y="248" class="t">Relay box: a mini PC with a SIM voice modem. Everything below runs locally.</text>
+
+  <!-- components, snake order -->
+  <rect x="498" y="262" width="200" height="64" rx="10" class="comp"/>
+  <text x="514" y="288" class="t">① SIM voice modem</text>
+  <text x="514" y="308" class="s">answers the call</text>
+
+  <rect x="711" y="262" width="200" height="64" rx="10" class="comp"/>
+  <text x="727" y="288" class="t">② Call handler</text>
+  <text x="727" y="308" class="s">consent prompt · keypad · record</text>
+
+  <rect x="924" y="262" width="200" height="64" rx="10" class="comp"/>
+  <text x="940" y="288" class="t">③ Speech to text</text>
+  <text x="940" y="308" class="s">Whisper · detects 5 languages</text>
+
+  <rect x="924" y="350" width="200" height="64" rx="10" class="comp"/>
+  <text x="940" y="376" class="t">④ Understand</text>
+  <text x="940" y="396" class="s">fine-tuned 0.5B · Gemma 3 4B</text>
+
+  <rect x="711" y="350" width="200" height="64" rx="10" class="comp"/>
+  <text x="727" y="376" class="t">⑤ Check the records</text>
+  <text x="727" y="396" class="s">SQLite · business.json · guards</text>
+
+  <rect x="498" y="350" width="200" height="64" rx="10" class="comp"/>
+  <text x="514" y="376" class="t">⑥ Speak the answer</text>
+  <text x="514" y="396" class="s">Piper voice, same language</text>
+
+  <!-- owner hand-off -->
+  <rect x="711" y="446" width="413" height="42" rx="10" class="owner"/>
+  <text x="727" y="472" class="t" fill="#c5cae9">Not sure? "I'll ask the owner to call you back."</text>
+  <path class="hand" d="M811,414 L811,446"/>
+
+  <!-- flow: caller -> tower -> box -> through components -> back to caller -->
+  <path id="journey" fill="none" stroke="none" d="M145,218 C200,130 280,130 330,184 C380,240 440,294 498,294 L598,294 L811,294 L1024,294 L1024,382 L811,382 L598,382 L498,382 C440,382 430,440 330,440 C230,440 150,430 120,362"/>
+  <path class="go" d="M145,218 C200,130 280,130 330,184 C380,240 440,294 498,294"/>
+  <path class="go" d="M698,294 L711,294 M911,294 L924,294 M1024,326 L1024,350 M924,382 L911,382 M711,382 L698,382"/>
+  <path class="back" d="M498,382 C440,382 430,440 330,440 C230,440 150,430 120,362"/>
+  <circle r="7" fill="#8fd19e"><animateMotion dur="7s" repeatCount="indefinite" rotate="auto"><mpath href="#journey"/></animateMotion></circle>
+  <circle r="7" fill="#f3d9b1" opacity="0"><set attributeName="opacity" to="1" begin="3.5s"/><animateMotion dur="7s" begin="3.5s" repeatCount="indefinite"><mpath href="#journey"/></animateMotion></circle>
+  <text x="230" y="462" class="note" fill="#f3d9b1">answer comes back on the same call</text>
+
+  <!-- badges -->
+  <g transform="translate(30,522)">
+    <rect width="138" height="34" rx="17" fill="#2e7d32" fill-opacity=".35" stroke="#8fd19e" stroke-opacity=".6"/><text x="69" y="22" text-anchor="middle" class="bad">NO INTERNET</text>
+    <rect x="150" width="138" height="34" rx="17" fill="#2e7d32" fill-opacity=".35" stroke="#8fd19e" stroke-opacity=".6"/><text x="219" y="22" text-anchor="middle" class="bad">NO CLOUD AI</text>
+    <rect x="300" width="160" height="34" rx="17" fill="#2e7d32" fill-opacity=".35" stroke="#8fd19e" stroke-opacity=".6"/><text x="380" y="22" text-anchor="middle" class="bad">NO SMARTPHONE</text>
+    <rect x="472" width="160" height="34" rx="17" fill="#5d4037" fill-opacity=".5" stroke="#f3d9b1" stroke-opacity=".6"/><text x="552" y="22" text-anchor="middle" class="bad">RUNS AT HOME</text>
+    <rect x="644" width="138" height="34" rx="17" fill="#5d4037" fill-opacity=".5" stroke="#f3d9b1" stroke-opacity=".6"/><text x="713" y="22" text-anchor="middle" class="bad">5 LANGUAGES</text>
+    <rect x="794" width="200" height="34" rx="17" fill="#3949ab" fill-opacity=".35" stroke="#9fa8da" stroke-opacity=".7"/><text x="894" y="22" text-anchor="middle" class="bad">HUMAN IN THE LOOP</text>
+  </g>
+  <text x="30" y="586" class="note">Target deployment. Steps ②–⑥ run in this repo today on a laptop CPU. Until the SIM voice modem (①) is fitted, calls reach the box through Twilio + a tunnel.</text>
+</svg>
