@@ -202,7 +202,7 @@ flowchart LR
     UI[Web UI<br/>Gradio]
     P[Pipeline]
     W[faster-whisper]
-    O[Ollama<br/>Qwen2.5 3B · Gemma 3 4B]
+    O[Ollama<br/>coop-extract 0.5B · Gemma 3 4B]
     DB[(SQLite<br/>price records)]
     BJ[[business.json]]
     PI[Piper voices]
@@ -231,15 +231,19 @@ flowchart TD
   QA --> G1{found and every number<br/>appears in profile or question?}
   G1 -- yes --> ANS1[ANSWER<br/>evidence: BUSINESS-PROFILE]
   G1 -- no --> NI[ABSTAIN: no_info<br/>offer a person]
-  PC -- yes --> EX[Slot extraction<br/>rules first, Qwen2.5 3B if gaps]
-  EX --> NG{price digits actually spoken?}
-  NG -- no --> DROP[drop the price]
-  NG --> MISS{coffee type, district,<br/>grade if parchment?}
+  PC -- yes --> EX[Slot extraction<br/>rules first, fine-tuned 0.5B if gaps]
+  EX --> NG{price, coffee form, grade<br/>actually spoken?}
+  NG -- no --> DROP[drop that value]
+  NG -- yes --> MISS{coffee type, district,<br/>grade if parchment?}
   DROP --> MISS
   MISS -- missing --> CL[CLARIFY]
-  MISS -- ok --> U{unit kg, currency KES?}
-  U -- no --> CL2[CLARIFY / ABSTAIN]
-  U -- yes --> R{record for district + form + grade?}
+  MISS -- ok --> U{price per kg?}
+  U -- no --> CL2[CLARIFY: ask per kg]
+  U -- yes --> C{currency KES?}
+  C -- no --> AB0[ABSTAIN: currency]
+  C -- yes --> D{known district?}
+  D -- no --> AB3[ABSTAIN: unknown_district]
+  D -- yes --> R{record for district + form + grade?}
   R -- no --> AB1[ABSTAIN: no_data / no_grade]
   R -- yes --> V{valid today and ≥ 3 samples?}
   V -- no --> AB2[ABSTAIN: stale / sparse]
